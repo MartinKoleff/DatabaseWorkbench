@@ -1,11 +1,15 @@
 public class Database {
-    private String name;
+    private String tableName;
+    private String defaultFolder = "D:\\test\\databaseEditor";
+    private String fullPath;
 
-    private Database(String tableName){
-        //Setup db obj via databaseEditor and edit / insert and delete from here...
+    //Setup db obj via databaseEditor and edit / insert and delete from here...
+    public Database(String tableName){
+        this.tableName = tableName;
+        fullPath = defaultFolder + "\\" + tableName + ".txt";
     }
 
-    public void select(){
+    public void select(){ //Select Name, DateBirth FROM Sample WHERE Id <> 5 AND DateBirth > “01.01.2000”
 
     }
 
@@ -17,9 +21,16 @@ public class Database {
 
     }
 
-    public void insert(String data){
+    public void insert(String data){ //Insert INTO Sample (Id, Name) VALUES (1, “Иван”)
      //Validate data...
     }
 
 
+    public String getTableName() {
+        return tableName;
+    }
+
+    public String getFullPath(){
+        return fullPath;
+    }
 }
