@@ -1,7 +1,14 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Database {
     private String tableName;
-    private String defaultFolder = "D:\\test\\databaseEditor";
+    private String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
     private String fullPath;
+
+    //initialize from file?
+    private List<String> columnNames = new ArrayList<>();
+    private List<List<Object>> data = new ArrayList<>();
 
     //Setup db obj via databaseEditor and edit / insert and delete from here...
     public Database(String tableName){
