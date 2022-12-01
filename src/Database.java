@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,14 @@ public class Database {
     }
 
     public void delete(){
-
+        File file = new File(this.getFullPath());
+        if (file.exists()) {
+            file.delete();
+            DatabaseEditor.databases.remove(this);
+            System.out.printf("Table %s has been deleted.\n", tableName);
+        } else {
+            System.out.printf("Table with the name %s doesn't exist. Please try again with a different name.", tableName);
+        }
     }
 
     public void join(){

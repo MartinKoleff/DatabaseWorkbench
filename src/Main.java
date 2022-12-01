@@ -9,7 +9,7 @@ public class Main {
         String command = sc.nextLine();
         String commandType;
         while (!command.equals("Stop")) {
-            commandType = command.split(" ")[0];
+            commandType = Utility.split(command, ' ').get(0);
             switch (commandType) {
                 case "CreateTable":
                     databaseEditor.createTable(command); //"CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)"

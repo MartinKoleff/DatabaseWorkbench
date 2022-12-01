@@ -1,16 +1,23 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DatabaseEditor {
-    private static String defaultFolder = "D:\\test\\databaseEditor";
-
+public class DatabaseEditor{ // implements Initializable
+//    private static String defaultFolder = "D:\\test\\databaseEditor";
+    private static String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
     private Database selectedDatabase;
-    private static List<Database> databases;
+    public static List<Database> databases = new ArrayList<>(); //encapsulate...
 
     public void createTable(String command) {
         setupData(command);
+    }
+
+    //Run on launch (implement interface?)
+    private void loadData(){
+        //read default folder
+        //get data...
     }
 
     private void setupData(String command) { //	CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)
@@ -65,29 +72,21 @@ public class DatabaseEditor {
         }
     }
 
-    public void dropTable(String command) {
-        String tableName = command.split(" ")[1];
-        if(databases.stream()
-                .filter(e -> e.getTableName().equals(tableName))
-                .collect(Collectors.toList())
-                .size() > 0){
+    public void dropTable(String command) { //DropTable Sample
+        String tableName = Utility.split(command, ' ').get(0);
+        Database databaseToDelete = null;
 
-            File file = new File(tableName);
-            file.delete();
-            //get DB from list...
-            //remove DB from list...
-            //delete .txt file...
-            //reload UI...
+        for (Database database: databases) {
+            if(database.getTableName().equals(tableName)){
+                databaseToDelete = database;
+                break;
+            }
         }
 
-//        fullPath = defaultFolder + "\\" + tableName + ".txt";
-//        File file = new File(fullPath);
-//        if (file.exists()){
-//            file.delete();
-//            System.out.printf("Table %s has been deleted.\n", tableName);
-//        }else{
-//            System.out.printf("Table with the name %s doesn't exist. Please try again with a different name.", tableName);
-//        }
+        if(databaseToDelete != null){
+            databaseToDelete.delete();
+            //reload UI...
+        }
     }
 
     public void listTables(String command) {
