@@ -7,7 +7,7 @@ public class DatabaseEditor {
     private static String defaultFolder = "D:\\test\\databaseEditor";
 
     private Database selectedDatabase;
-    private List<Database> databases;
+    private static List<Database> databases;
 
     public void createTable(String command) {
         setupData(command);
@@ -16,6 +16,7 @@ public class DatabaseEditor {
     private void setupData(String command) { //	CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)
         List<String> dataRaw = Arrays.asList(command.split("[(: ,\")]"));
         selectedDatabase = new Database(dataRaw.get(1));
+        databases.add(selectedDatabase);
 
         //Create file
         File file = new File(selectedDatabase.getFullPath());
@@ -71,6 +72,8 @@ public class DatabaseEditor {
                 .collect(Collectors.toList())
                 .size() > 0){
 
+            File file = new File(tableName);
+            file.delete();
             //get DB from list...
             //remove DB from list...
             //delete .txt file...
