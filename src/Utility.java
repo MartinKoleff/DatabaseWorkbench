@@ -48,4 +48,19 @@ class Utility {
     public static String join(String text1, String text2){
         return text1 + text2;
     }
+
+    public static String toLowerCase(String text) {
+        char[] textToLowerCase = new char[text.length()];
+        int counter = 0;
+        for (char letter : text.toCharArray()){
+            //check if upper case...
+            if((int)Utility.charAt(text, counter) >= 65 && (int)Utility.charAt(text, counter) <= 90){
+                textToLowerCase[counter] = (char)((int)Utility.charAt(text, counter) + 32);
+            }else{
+                textToLowerCase[counter] = Utility.charAt(text, counter);
+            }
+            counter++;
+        }
+        return new String(textToLowerCase);
+    }
 }

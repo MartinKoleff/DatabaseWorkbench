@@ -9,31 +9,31 @@ public class Main {
         String command = sc.nextLine();
         String commandType;
         while (!command.equals("Stop")) {
-            commandType = Utility.split(command, ' ').get(0);
+            commandType = Utility.toLowerCase(Utility.split(command, ' ').get(0));
             switch (commandType) {
-                case "CreateTable":
+                case "createtable":
                     databaseEditor.createTable(command); //"CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)"
                     break;
-                case "DropTable":
+                case "droptable":
                     databaseEditor.dropTable(command);
                     break;
-                case "ListTables":
+                case "listtables":
                     databaseEditor.listTables(command);
                     break;
-                case "TableInfo":
+                case "tableinfo":
                     databaseEditor.tableInfo(command);
                     break;
-                case "Insert":
+                case "insert":
                     break;
-                case "Select":
+                case "select":
                     break;
-                case "Join":
+                case "join":
                     break;
-                case "Delete":
+                case "delete":
                     break;
-                case "CreateIndex":
+                case "createindex":
                     break;
-                case "DropIndex":
+                case "dropindex":
                     break;
                 default:
                     System.out.println("Wrong command. Please try again");
@@ -44,7 +44,6 @@ public class Main {
         }
 //        databaseEditor.createTable("CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)");
 //        databaseEditor.dropTable("Sample");
-
 
     }
 
