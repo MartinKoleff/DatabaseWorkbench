@@ -1,7 +1,15 @@
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Database {
     private String tableName;
-    private String defaultFolder = "D:\\test\\databaseEditor";
+    private String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
     private String fullPath;
+
+    //initialize from file?
+    private List<String> columnNames = new ArrayList<>();
+    private List<List<Object>> data = new ArrayList<>();
 
     //Setup db obj via databaseEditor and edit / insert and delete from here...
     public Database(String tableName){
@@ -14,7 +22,14 @@ public class Database {
     }
 
     public void delete(){
-
+        File file = new File(this.getFullPath());
+        if (file.exists()) {
+            file.delete();
+            DatabaseEditor.databases.remove(this);
+            System.out.printf("Table %s has been deleted.\n", tableName);
+        } else {
+            System.out.printf("Table with the name %s doesn't exist. Please try again with a different name.", tableName);
+        }
     }
 
     public void join(){
