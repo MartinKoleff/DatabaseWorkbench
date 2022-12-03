@@ -5,10 +5,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DatabaseEditor{ // implements Initializable
-//    private static String defaultFolder = "D:\\test\\databaseEditor";
+    //private static String defaultFolder = "D:\\test\\databaseEditor";
     private static String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
     private Database selectedDatabase;
-    public static List<Database> databases = new ArrayList<>(); //encapsulate...
+    private static List<Database> databases = new ArrayList<>();
+
+    public static List<Database> getDatabases(){
+        return databases;
+    }
 
     public void createTable(String command) {
         setupData(command);
@@ -42,17 +46,18 @@ public class DatabaseEditor{ // implements Initializable
         writeInFile(selectedDatabase.getTableName(), true);
 
         int totalColumns = command.split(",").length + 1;
-        String[] columnsData = command.split("[(,)]");
-        String[] columnData;
+        List<String> columnsData = Utility.split(command, new char[]{'(', ',', ')'});
+        List<String> columnData;
         String columnName, columnDataType, defaultValue = "null";
         for (int i = 1; i < totalColumns; i++) {
-            columnData = Arrays.stream(columnsData[i].split("[ :]")) //split by \" doesnt work...
-                    .filter(e -> !e.isEmpty())
-                    .toArray(String[]::new);
-            columnName = columnData[0];
-            columnDataType = columnData[1];
-            if (columnData.length > 2 && columnData[2].equals("default")) {
-                defaultValue = String.join("", columnData[3].split("\""));
+            columnData = Utility.split(columnsData.get(i), new char[]{' ', ':'});
+//                    .stream() //split by \" doesnt work...
+//                    .filter(e -> !e.isEmpty())
+//                    .toArray(String[]::new);
+            columnName = columnData.get(0);
+            columnDataType = columnData.get(1);
+            if (columnData.size() > 2 && columnData.get(2).equals("default")) {
+                defaultValue = Utility.join(Utility.split(columnData.get(3), '\"'), "");
             }
 
             writeInFile(columnName + ':' + defaultValue + "\t", false);

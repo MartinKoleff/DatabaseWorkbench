@@ -25,7 +25,7 @@ public class Database {
         File file = new File(this.getFullPath());
         if (file.exists()) {
             file.delete();
-            DatabaseEditor.databases.remove(this);
+            DatabaseEditor.getDatabases().remove(this);
             System.out.printf("Table %s has been deleted.\n", tableName);
         } else {
             System.out.printf("Table with the name %s doesn't exist. Please try again with a different name.", tableName);

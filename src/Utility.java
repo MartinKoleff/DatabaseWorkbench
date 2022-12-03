@@ -69,8 +69,12 @@ class Utility {
         return text.toCharArray()[index];
     }
 
-    public static String join(String text1, String text2){
-        return text1 + text2;
+    public static String join(List<String> list, String delimiter){ //Make StringBuilder...
+        String concatText = "";
+        for(int i = 0; i < list.size() - 1; i++){
+            concatText += list.get(i) + delimiter;
+        }
+        return concatText;
     }
 
     public static String toLowerCase(String text) {
