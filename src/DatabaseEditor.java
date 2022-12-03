@@ -17,11 +17,11 @@ public class DatabaseEditor{ // implements Initializable
     //Run on launch (implement interface?)
     private void loadData(){
         //read default folder
-        //get data...
+        //get data... (initialize databases...)
     }
 
-    private void setupData(String command) { //	CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)
-        List<String> dataRaw = Arrays.asList(command.split("[(: ,\")]"));
+    private void setupData(String command) { //CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)
+        List<String> dataRaw = Utility.split(command, new char[]{'(', ':', ',', '\"', ')'});
         selectedDatabase = new Database(dataRaw.get(1));
         databases.add(selectedDatabase);
 

@@ -21,6 +21,30 @@ class Utility {
         return splitText;
     }
 
+    public static List<String> split(String text, char[] regex){
+        List<String> splitText = new ArrayList<>();
+        int currentIndex = 0;
+        int startIndex = 0;
+        boolean hasEntered = false;
+        for (char character : text.toCharArray()){
+            for(char regexCharacter : regex) {
+                if (regexCharacter == character && !hasEntered) {
+                    splitText.add(substring(text, startIndex, currentIndex));
+                    startIndex = currentIndex + 1;
+                    hasEntered = true;
+                }
+            }
+            hasEntered = false;
+            currentIndex++;
+        }
+
+        //has split -> add last text
+        if(startIndex != 0){
+            splitText.add(substring(text, startIndex, text.length()));
+        }
+        return splitText;
+    }
+
     public static String substring(String text, int index){
         char[] substringArray = new char[text.length() - index];
         int counter = 0;
