@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //Setup DB obj via databaseEditor and edit / insert and delete from here...
 public class Database {
@@ -12,11 +14,13 @@ public class Database {
     private List<String> columnNames = new ArrayList<>();
     private List<List<Object>> data = new ArrayList<>();
 
-    public Database(String tableName) {
+    public Database(String tableName, boolean loadData) {
         this.tableName = tableName;
         fullPath = defaultFolder + "\\" + tableName + ".txt";
 
-        loadData();
+        if (loadData) {
+            loadData();
+        }
     }
 
     private void loadData() {
@@ -26,20 +30,24 @@ public class Database {
 
             String line;
             while ((line = br.readLine()) != null) {
+                //Put in list...
                 System.out.println(line);
             }
+            System.out.println();
         } catch (FileNotFoundException ex) {
-            throw new RuntimeException(ex);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public void select() { //Select Name, DateBirth FROM Sample WHERE Id <> 5 AND DateBirth > “01.01.2000”
-
+    public void select(String command) { //Select Name, DateBirth FROM Sample WHERE Id <> 5 AND DateBirth > "01.01.2000"
+        //Validate data...
+        if (validateCommand(command) == true) {
+            //Continue...
+        }
     }
 
-    public void delete() {
+    public void deleteDatabase() {
         File file = new File(this.getFullPath());
         if (file.exists()) {
             file.delete();
@@ -50,12 +58,40 @@ public class Database {
         }
     }
 
+    public void deleteRow() {
+
+    }
+
     public void join() {
 
     }
 
-    public void insert(String data) { //Insert INTO Sample (Id, Name) VALUES (1, “Иван”)
+    public void insert(String command) { //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
         //Validate data...
+        if (validateCommand(command) == true) {
+            //Continue...
+
+        }
+    }
+
+    private boolean validateCommand(String command) {
+        List<String> dataRaw = Utility.split(command, new char[]{'(', ':', ',', ' ', '\"', ')'});
+        String commandType = dataRaw.get(0);
+
+        //Create Pattern class...
+        String insertRegex = "Insert INTO (?<tableName>\\w{1,}) (?<columns>(\\S{1,}, ){1,}(\\S{1,})) VALUES (?<values>(\"?\\S{1,}\"?, ){1,}(\"?\\S{1,}\"?))";
+        String selectRegex = "Select (?<columns>(\\w+, )+(\\w+)) FROM (?<tableName>\\w+)";
+        String deleteRegex = " ";
+        switch (commandType) {
+            case "Insert":
+                return command.matches(insertRegex);
+            case "Select":
+                return command.matches(selectRegex);
+            case "Delete":
+                return command.matches(deleteRegex);
+        }
+
+        return false;
     }
 
 

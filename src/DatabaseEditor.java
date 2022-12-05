@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class DatabaseEditor { // implements Initializable
     //    private static String defaultFolder = "D:\\test\\databaseEditor";
     private static String defaultFolderPath = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
-    private Database selectedDatabase;
+    private static Database selectedDatabase;
     private File defaultFolder = new File(defaultFolderPath);
     private static List<Database> databases = new ArrayList<>();
 
@@ -17,6 +17,9 @@ public class DatabaseEditor { // implements Initializable
         return databases;
     }
 
+    public Database getSelectedDatabase(){
+        return selectedDatabase;
+    }
     public void createTable(String command) {
         setupData(command);
     }
@@ -30,20 +33,22 @@ public class DatabaseEditor { // implements Initializable
             folder = new File(path);
         }
         Database database;
+        databases.clear();
         for (File file :
                 folder.listFiles()) {
-            database = new Database(file.getName());
+            database = new Database(Utility.split(file.getName(), '.').get(0), true);
             databases.add(database);
         }
     }
 
     private void setupData(String command) { //CreateTable Sample(Id:int, Name:string, BirthDate:date default "01.01.2022")
         List<String> dataRaw = Utility.split(command, new char[]{'(', ':', ',', ' ', '\"', ')'});
-        selectedDatabase = new Database(dataRaw.get(1));
+        selectedDatabase = new Database(dataRaw.get(1), false);
         databases.add(selectedDatabase);
 
         //Create file
         File file = new File(selectedDatabase.getFullPath());
+        file.delete();
         try {
             file.createNewFile();
 
@@ -58,19 +63,22 @@ public class DatabaseEditor { // implements Initializable
         //Write table name on first row
         writeInFile(selectedDatabase.getTableName(), true);
 
-        int totalColumns = command.split(",").length + 1;
-        List<String> columnsData = Utility.split(command, new char[]{'(', ',', ')'});
-        List<String> columnData;
-        String columnName, columnDataType, defaultValue = "null";
-        for (int i = 1; i < totalColumns; i++) {
-            columnData = Utility.split(columnsData.get(i), new char[]{' ', ':'});
-            columnName = columnData.get(0);
-            columnDataType = columnData.get(1);
-            if (columnData.size() > 2 && columnData.get(2).equals("default")) {
-                defaultValue = Utility.join(Utility.split(columnData.get(3), '\"'), "");
-            }
+        try {
+            int totalColumns = Utility.split(command, ' ').size() + 1;
+            List<String> columnsData = Utility.split(command, new char[]{'(', ',', ')'});
+            List<String> columnData;
+            String columnName, columnDataType, defaultValue = "null";
+            for (int i = 1; i < totalColumns; i++) {
+                columnData = Utility.split(columnsData.get(i), new char[]{' ', ':'});
+                columnName = columnData.get(0);
+                columnDataType = columnData.get(1);
+                if (columnData.size() > 2 && columnData.get(2).equals("default")) {
+                    defaultValue = Utility.join(Utility.split(columnData.get(3), '\"'), "");
+                }
 
-            writeInFile(columnName + ':' + defaultValue + "\t", false);
+                writeInFile(columnName + ':' + defaultValue + "\t", false);
+            }
+        }catch (IndexOutOfBoundsException e){
         }
     }
 
@@ -99,7 +107,7 @@ public class DatabaseEditor { // implements Initializable
         }
 
         if (databaseToDelete != null) {
-            databaseToDelete.delete();
+            databaseToDelete.deleteDatabase();
             //reload UI...
         }
     }
@@ -108,17 +116,17 @@ public class DatabaseEditor { // implements Initializable
         String path = Utility.split(command, ' ').get(1);
         loadData(path);
 
-        for (Database database :
-                databases) {
-            System.out.println(database.getTableName());
-        }
+//        for (Database database :
+//                databases) {
+//            System.out.println(database.getTableName());
+//        }
     }
 
     public void tableInfo(String command) {
         String tableName = Utility.split(command, ' ').get(1);
         for (int i = 0; i < defaultFolder.listFiles().length; i++) {
             if (defaultFolder.listFiles()[i].getName().equals(tableName + ".txt")) {
-                Database database = new Database(tableName);
+                Database database = new Database(tableName, true);
                 return;
             }
         }

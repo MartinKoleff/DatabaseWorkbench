@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -8,24 +9,35 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String command =  sc.nextLine();
         String commandType;
+        Database selectedDatabase;
         while (!command.equals("Stop")) {
             commandType = Utility.split(command, ' ').get(0); //Utility.toLowerCase()
             switch (commandType) {
-                case "CreateTable":
-                    databaseEditor.createTable(command); //CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)
+                case "CreateTable": //CreateTable Sample(Id:int, Name:string, BirthDate:date default "01.01.2022")
+                    databaseEditor.createTable(command);
                     break;
-                case "DropTable":
-                    databaseEditor.dropTable(command); //DropTable Sample
+                case "DropTable": //DropTable Sample
+                    databaseEditor.dropTable(command);
                     break;
-                case "ListTables":
-                    databaseEditor.listTables(command); //ListTables default
+                case "ListTables": //ListTables default
+                    databaseEditor.listTables(command);
                     break;
-                case "TableInfo":
-                    databaseEditor.tableInfo(command); //TableInfo Sample
+                case "TableInfo": //TableInfo Sample
+                    databaseEditor.tableInfo(command);
                     break;
-                case "Insert":
+                case "Insert":  //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
+                    selectedDatabase = new Database(Utility.split(command, ' ').get(2), false);
+                    //databaseEditor.getSelectedDatabase().insert(command);
+                    selectedDatabase.insert(command);
                     break;
-                case "Select":
+                case "Select": //Select Name, DateBirth FROM Sample WHERE Id <> 5 AND DateBirth > "01.01.2000"
+                    List<String> dataRaw = Utility.split(command, new char[]{' ', ',', '\"'});
+
+                    int fromIndex = dataRaw.indexOf("FROM");
+                    String tableName = dataRaw.get(fromIndex + 1);
+                    selectedDatabase = new Database(tableName, false);
+
+                    selectedDatabase.select(command);
                     break;
                 case "Join":
                     break;
