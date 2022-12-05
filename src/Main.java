@@ -6,34 +6,34 @@ public class Main {
         DatabaseEditor databaseEditor = new DatabaseEditor();
 
         Scanner sc = new Scanner(System.in);
-        String command = sc.nextLine();
+        String command =  sc.nextLine();
         String commandType;
         while (!command.equals("Stop")) {
-            commandType = Utility.toLowerCase(Utility.split(command, ' ').get(0));
+            commandType = Utility.split(command, ' ').get(0); //Utility.toLowerCase()
             switch (commandType) {
-                case "createtable":
-                    databaseEditor.createTable(command); //"CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)"
+                case "CreateTable":
+                    databaseEditor.createTable(command); //CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)
                     break;
-                case "droptable":
-                    databaseEditor.dropTable(command);
+                case "DropTable":
+                    databaseEditor.dropTable(command); //DropTable Sample
                     break;
-                case "listtables":
-                    databaseEditor.listTables(command);
+                case "ListTables":
+                    databaseEditor.listTables(command); //ListTables default
                     break;
-                case "tableinfo":
-                    databaseEditor.tableInfo(command);
+                case "TableInfo":
+                    databaseEditor.tableInfo(command); //TableInfo Sample
                     break;
-                case "insert":
+                case "Insert":
                     break;
-                case "select":
+                case "Select":
                     break;
-                case "join":
+                case "Join":
                     break;
-                case "delete":
+                case "Delete":
                     break;
-                case "createindex":
+                case "CreateIndex":
                     break;
-                case "dropindex":
+                case "DropIndex":
                     break;
                 default:
                     System.out.println("Wrong command. Please try again");
@@ -44,7 +44,5 @@ public class Main {
         }
 //        databaseEditor.createTable("CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)");
 //        databaseEditor.dropTable("Sample");
-
     }
-
 }

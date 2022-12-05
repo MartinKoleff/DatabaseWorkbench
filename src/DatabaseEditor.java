@@ -1,16 +1,19 @@
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class DatabaseEditor{ // implements Initializable
-    //private static String defaultFolder = "D:\\test\\databaseEditor";
-    private static String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
+public class DatabaseEditor { // implements Initializable
+    //    private static String defaultFolder = "D:\\test\\databaseEditor";
+    private static String defaultFolderPath = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
     private Database selectedDatabase;
+    private File defaultFolder = new File(defaultFolderPath);
     private static List<Database> databases = new ArrayList<>();
 
-    public static List<Database> getDatabases(){
+    public static List<Database> getDatabases() {
         return databases;
     }
 
@@ -19,13 +22,23 @@ public class DatabaseEditor{ // implements Initializable
     }
 
     //Run on launch (implement interface?)
-    private void loadData(){
-        //read default folder
-        //get data... (initialize databases...)
+    private void loadData(String path) {
+        File folder;
+        if (path.equals("default")) {
+            folder = new File(defaultFolderPath);
+        } else {
+            folder = new File(path);
+        }
+        Database database;
+        for (File file :
+                folder.listFiles()) {
+            database = new Database(file.getName());
+            databases.add(database);
+        }
     }
 
-    private void setupData(String command) { //CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)
-        List<String> dataRaw = Utility.split(command, new char[]{'(', ':', ',', '\"', ')'});
+    private void setupData(String command) { //CreateTable Sample(Id:int, Name:string, BirthDate:date default "01.01.2022")
+        List<String> dataRaw = Utility.split(command, new char[]{'(', ':', ',', ' ', '\"', ')'});
         selectedDatabase = new Database(dataRaw.get(1));
         databases.add(selectedDatabase);
 
@@ -51,9 +64,6 @@ public class DatabaseEditor{ // implements Initializable
         String columnName, columnDataType, defaultValue = "null";
         for (int i = 1; i < totalColumns; i++) {
             columnData = Utility.split(columnsData.get(i), new char[]{' ', ':'});
-//                    .stream() //split by \" doesnt work...
-//                    .filter(e -> !e.isEmpty())
-//                    .toArray(String[]::new);
             columnName = columnData.get(0);
             columnDataType = columnData.get(1);
             if (columnData.size() > 2 && columnData.get(2).equals("default")) {
@@ -81,24 +91,36 @@ public class DatabaseEditor{ // implements Initializable
         String tableName = Utility.split(command, ' ').get(0);
         Database databaseToDelete = null;
 
-        for (Database database: databases) {
-            if(database.getTableName().equals(tableName)){
+        for (Database database : databases) {
+            if (database.getTableName().equals(tableName)) {
                 databaseToDelete = database;
                 break;
             }
         }
 
-        if(databaseToDelete != null){
+        if (databaseToDelete != null) {
             databaseToDelete.delete();
             //reload UI...
         }
     }
 
     public void listTables(String command) {
+        String path = Utility.split(command, ' ').get(1);
+        loadData(path);
 
+        for (Database database :
+                databases) {
+            System.out.println(database.getTableName());
+        }
     }
 
     public void tableInfo(String command) {
-
+        String tableName = Utility.split(command, ' ').get(1);
+        for (int i = 0; i < defaultFolder.listFiles().length; i++) {
+            if (defaultFolder.listFiles()[i].getName().equals(tableName + ".txt")) {
+                Database database = new Database(tableName);
+                return;
+            }
+        }
     }
 }

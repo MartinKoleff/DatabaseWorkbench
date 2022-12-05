@@ -29,6 +29,10 @@ class Utility {
         for (char character : text.toCharArray()){
             for(char regexCharacter : regex) {
                 if (regexCharacter == character && !hasEntered) {
+                    if(startIndex == currentIndex){
+                        startIndex++;
+                        break;
+                    }
                     splitText.add(substring(text, startIndex, currentIndex));
                     startIndex = currentIndex + 1;
                     hasEntered = true;
