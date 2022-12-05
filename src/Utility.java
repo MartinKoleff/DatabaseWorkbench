@@ -17,6 +17,8 @@ class Utility {
         //has split -> add last text
         if(startIndex != 0){
             splitText.add(substring(text, startIndex, text.length()));
+        }else{
+            splitText.add(text);
         }
         return splitText;
     }
