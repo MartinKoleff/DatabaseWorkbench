@@ -45,7 +45,7 @@ class Utility {
         }
 
         //has split -> add last text
-        if(startIndex != 0){
+        if(startIndex != 0 && startIndex != currentIndex){
             splitText.add(substring(text, startIndex, text.length()));
         }
         return splitText;

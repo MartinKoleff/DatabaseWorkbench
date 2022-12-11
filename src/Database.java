@@ -7,7 +7,9 @@ import java.util.regex.Pattern;
 //Setup DB obj via databaseEditor and edit / insert and delete from here...
 public class Database {
     private String tableName;
-    private String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
+//    private String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
+    private static String defaultFolder = "D:\\test\\databaseEditor";
+
     private String fullPath;
 
     //initialize from file?
@@ -82,6 +84,7 @@ public class Database {
         String insertRegex = "Insert INTO (?<tableName>\\w{1,}) (?<columns>(\\S{1,}, ){1,}(\\S{1,})) VALUES (?<values>(\"?\\S{1,}\"?, ){1,}(\"?\\S{1,}\"?))";
         String selectRegex = "Select (?<columns>(\\w+, )+(\\w+)) FROM (?<tableName>\\w+)";
         String deleteRegex = " ";
+        String createRegex = "CreateTable (?<table_name>\\w+)(?<columns>(\\(((\\w+:\\w+(, )?)( default )?(?<date_default_value>\"\\d+.\\d+.\\d+\")?(?<int_default_value>\\d+)?(?<string_default_value>\\w+)?(, )?){1,}))\\)";
         switch (commandType) {
             case "Insert":
                 return command.matches(insertRegex);

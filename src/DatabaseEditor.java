@@ -7,8 +7,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class DatabaseEditor { // implements Initializable
-    //    private static String defaultFolder = "D:\\test\\databaseEditor";
-    private static String defaultFolderPath = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
+    private static String defaultFolderPath = "D:\\test\\databaseEditor";
+    //private static String defaultFolderPath = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
     private static Database selectedDatabase;
     private File defaultFolder = new File(defaultFolderPath);
     private static List<Database> databases = new ArrayList<>();
@@ -17,9 +17,10 @@ public class DatabaseEditor { // implements Initializable
         return databases;
     }
 
-    public Database getSelectedDatabase(){
+    public Database getSelectedDatabase() {
         return selectedDatabase;
     }
+
     public void createTable(String command) {
         setupData(command);
     }
@@ -74,11 +75,12 @@ public class DatabaseEditor { // implements Initializable
                 columnDataType = columnData.get(1);
                 if (columnData.size() > 2 && columnData.get(2).equals("default")) {
                     defaultValue = Utility.join(Utility.split(columnData.get(3), '\"'), "");
+                    writeInFile(columnName + ':' + columnDataType + " default " + defaultValue + "\t", false);
+                } else {
+                    writeInFile(columnName + ':' + columnDataType + "\t", false);
                 }
-
-                writeInFile(columnName + ':' + defaultValue + "\t", false);
             }
-        }catch (IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e) {
         }
     }
 
