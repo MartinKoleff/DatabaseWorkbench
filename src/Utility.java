@@ -16,6 +16,7 @@ class Utility {
 
         //has split -> add last text
         if(startIndex != 0){
+            if(startIndex == text.length()) return splitText;
             splitText.add(substring(text, startIndex, text.length()));
         }else{
             splitText.add(text);
@@ -45,8 +46,11 @@ class Utility {
         }
 
         //has split -> add last text
-        if(startIndex != 0 && startIndex != currentIndex){
+        if(startIndex != 0){
+            if(startIndex == text.length()) return splitText;
             splitText.add(substring(text, startIndex, text.length()));
+        }else{
+            splitText.add(text);
         }
         return splitText;
     }
@@ -96,5 +100,13 @@ class Utility {
             counter++;
         }
         return new String(textToLowerCase);
+    }
+
+    public static String concat(List<String> list, char concatChar) {
+        String concatText = "";
+        for (String words : list){
+            concatText += words + concatChar;
+        }
+        return concatText;
     }
 }

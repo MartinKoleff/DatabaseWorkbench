@@ -21,6 +21,10 @@ public class DatabaseEditor { // implements Initializable
         return selectedDatabase;
     }
 
+    public void setSelectedDatabase(Database database) {
+        selectedDatabase = database;
+    }
+
     public void createTable(String command) {
         setupData(command);
     }
@@ -94,6 +98,32 @@ public class DatabaseEditor { // implements Initializable
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void insert(List<List<String>> columnValues, List<String> columnNames) { //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
+        File file = new File(selectedDatabase.getFullPath());
+        List<String> columnNameOrder = selectedDatabase.getColumnOrder();
+
+        String lineToInsert = "";
+        if (file.exists()) {
+            for (int i = 0; i < columnValues.size(); i++) {
+                for (int j = 0; j < columnValues.get(i).size(); j++) {
+                 //append to lineToInsert based on the columnOrder...
+                    //columnNames order with columnNameOrder...
+
+                }
+                //validate columns (default value)
+                //make sure the data goes to the correct column
+                //if column is not used -> add default value if avaiable -> null if not
+
+
+                //switched position case
+
+
+            }
+        } else {
+            return;
         }
     }
 

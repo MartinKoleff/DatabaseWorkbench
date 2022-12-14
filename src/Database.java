@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 //Setup DB obj via databaseEditor and edit / insert and delete from here...
 public class Database {
     private String tableName;
-//    private String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
+    //    private String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
     private static String defaultFolder = "D:\\test\\databaseEditor";
 
     private String fullPath;
@@ -43,10 +43,7 @@ public class Database {
     }
 
     public void select(String command) { //Select Name, DateBirth FROM Sample WHERE Id <> 5 AND DateBirth > "01.01.2000"
-        //Validate data...
-        if (validateCommand(command) == true) {
-            //Continue...
-        }
+
     }
 
     public void deleteDatabase() {
@@ -68,35 +65,6 @@ public class Database {
 
     }
 
-    public void insert(String command) { //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
-        //Validate data...
-        if (validateCommand(command) == true) {
-            //Continue...
-
-        }
-    }
-
-    private boolean validateCommand(String command) {
-        List<String> dataRaw = Utility.split(command, new char[]{'(', ':', ',', ' ', '\"', ')'});
-        String commandType = dataRaw.get(0);
-
-        //Create Pattern class...
-        String insertRegex = "Insert INTO (?<tableName>\\w{1,}) (?<columns>(\\S{1,}, ){1,}(\\S{1,})) VALUES (?<values>(\"?\\S{1,}\"?, ){1,}(\"?\\S{1,}\"?))";
-        String selectRegex = "Select (?<columns>(\\w+, )+(\\w+)) FROM (?<tableName>\\w+)";
-        String deleteRegex = " ";
-        String createRegex = "CreateTable (?<table_name>\\w+)(?<columns>(\\(((\\w+:\\w+(, )?)( default )?(?<date_default_value>\"\\d+.\\d+.\\d+\")?(?<int_default_value>\\d+)?(?<string_default_value>\\w+)?(, )?){1,}))\\)";
-        switch (commandType) {
-            case "Insert":
-                return command.matches(insertRegex);
-            case "Select":
-                return command.matches(selectRegex);
-            case "Delete":
-                return command.matches(deleteRegex);
-        }
-
-        return false;
-    }
-
 
     public String getTableName() {
         return tableName;
@@ -104,5 +72,30 @@ public class Database {
 
     public String getFullPath() {
         return fullPath;
+    }
+
+    public List<String> getColumnOrder() {
+        try {
+            File file = new File(this.getFullPath());
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            String line;
+            int counter = 1;
+            List<String> columnOrder = new ArrayList<>();
+            while ((line = br.readLine()) != null) {
+                if(counter == 2){ //2nd line -> columns
+                    List<String> columns = Utility.split(line, '\t');
+                    for (String column: columns){
+                        columnOrder.add(Utility.split(column, ':').get(0));
+                    }
+                }
+                counter++;
+            }
+            return columnOrder;
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        return null;
     }
 }
