@@ -101,37 +101,46 @@ public class DatabaseEditor { // implements Initializable
         }
     }
 
-    public void insert(List<String> columnNames, List<List<String>> columnValues) { //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
+    public void insert(List<String> columnNames, List<List<String>> columnValues) {
+        //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
+        //Insert INTO Sample (Name, Id) VALUES ("Ivan", 2)
         File file = new File(selectedDatabase.getFullPath());
         List<String> columnNameOrder = selectedDatabase.getColumnOrder();
 
-        String lineToInsert = "";
-        int counter = 0;
-        boolean containsColumn = false;
+
         if (file.exists()) {
             for (int i = 0; i < columnValues.size(); i++) {
                 for (int j = 0; j < columnValues.get(i).size(); j++) {
-                    //append to lineToInsert based on the columnOrder...
-
-                    /**EXTRACT INTO NEW FUNCTION...*/
-                    for (int k = 0; k < columnNames.size(); k++) {
-                        for (int l = 0; l < columnNames.size(); l++) {
-                            if (columnNames.get(l).equals(columnNameOrder.get(counter))) { //out of range exception...
-                                lineToInsert += columnValues.get(i).get(l) + "\t";
-                                containsColumn = true;
-                            }
-                        }
-                        if (!containsColumn) {
-                            //insert default value...
-                        }
-                        containsColumn = false;
-                        counter++;
-                    }
+                    createLine(i, columnNames, columnNameOrder, columnValues);
                 }
             }
         } else {
             return;
         }
+    }
+
+    //Double print...
+    private void createLine(int columnIndex, List<String> columnNames, List<String> columnNameOrder, List<List<String>> columnValues){
+        //append to lineToInsert based on the columnOrder...
+        String lineToInsert = "";
+        int counter = 0;
+        boolean containsColumn = false;
+
+        for (int k = 0; k < columnNames.size(); k++) {
+            for (int l = 0; l < columnNames.size(); l++) {
+                if (columnNames.get(l).equals(columnNameOrder.get(counter))) {
+                    lineToInsert += columnValues.get(columnIndex).get(l) + "\t";
+                    containsColumn = true;
+                }
+            }
+            if (!containsColumn) {
+                //insert default value...
+            }
+            containsColumn = false;
+            counter++;
+        }
+
+        writeInFile(lineToInsert, true);
     }
 
     public void dropTable(String command) { //DropTable Sample
