@@ -101,26 +101,33 @@ public class DatabaseEditor { // implements Initializable
         }
     }
 
-    public void insert(List<List<String>> columnValues, List<String> columnNames) { //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
+    public void insert(List<String> columnNames, List<List<String>> columnValues) { //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
         File file = new File(selectedDatabase.getFullPath());
         List<String> columnNameOrder = selectedDatabase.getColumnOrder();
 
         String lineToInsert = "";
+        int counter = 0;
+        boolean containsColumn = false;
         if (file.exists()) {
             for (int i = 0; i < columnValues.size(); i++) {
                 for (int j = 0; j < columnValues.get(i).size(); j++) {
-                 //append to lineToInsert based on the columnOrder...
-                    //columnNames order with columnNameOrder...
+                    //append to lineToInsert based on the columnOrder...
 
+                    /**EXTRACT INTO NEW FUNCTION...*/
+                    for (int k = 0; k < columnNames.size(); k++) {
+                        for (int l = 0; l < columnNames.size(); l++) {
+                            if (columnNames.get(l).equals(columnNameOrder.get(counter))) { //out of range exception...
+                                lineToInsert += columnValues.get(i).get(l) + "\t";
+                                containsColumn = true;
+                            }
+                        }
+                        if (!containsColumn) {
+                            //insert default value...
+                        }
+                        containsColumn = false;
+                        counter++;
+                    }
                 }
-                //validate columns (default value)
-                //make sure the data goes to the correct column
-                //if column is not used -> add default value if avaiable -> null if not
-
-
-                //switched position case
-
-
             }
         } else {
             return;

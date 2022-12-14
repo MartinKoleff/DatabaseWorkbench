@@ -29,9 +29,10 @@ public class Main {
                 case "TableInfo": //TableInfo Sample
                     databaseEditor.tableInfo(command);
                     break;
-                case "Insert":  //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
+                case "Insert":  //Insert INTO Sample (Id, Name) VALUES (1, "Иван") //Insert INTO Sample (Name, Id) VALUES ("Mikhail", 2)
                     dataRaw = Utility.split(command, new char[]{' ', ',', '\"', '(', ')'});
                     tableName = dataRaw.get(2);
+
                     selectedDatabase = new Database(tableName, false);
                     databaseEditor.setSelectedDatabase(selectedDatabase);
 
@@ -44,7 +45,7 @@ public class Main {
                                 == Utility.split(dataRaw2.get(3), new char[]{' ', ','}).size()) {
                             columnNames.add(Utility.split(dataRaw2.get(3), new char[]{' ', ','}));
 
-                            databaseEditor.insert(columnNames, Utility.split(dataRaw2.get(1), new char[]{' ', ','}));
+                            databaseEditor.insert(Utility.split(dataRaw2.get(1), new char[]{' ', ','}), columnNames);
                             columnNames.clear();
                         }
                     } catch (Exception e) {
