@@ -8,7 +8,8 @@ import java.util.regex.Pattern;
 public class Database {
     private String tableName;
     //    private String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
-    private static String defaultFolder = "D:\\test\\databaseEditor";
+//    private static String defaultFolder = "D:\\test\\databaseEditor";
+    private static String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
 
     private String fullPath;
 
@@ -72,6 +73,34 @@ public class Database {
 
     public String getFullPath() {
         return fullPath;
+    }
+
+    public List<String> getColumnTypeOrder() {
+        try {
+            File file = new File(this.getFullPath());
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            String line;
+            int counter = 1;
+            List<String> columnTypeOrder = new ArrayList<>();
+            String dataTypeWithDefault, dataType;
+            while ((line = br.readLine()) != null) {
+                if(counter == 2){ //2nd line -> columns
+                    List<String> columns = Utility.split(line, '\t');
+                    for (String column: columns){
+                        dataTypeWithDefault = Utility.split(column, ':').get(1);
+                        dataType = Utility.split(dataTypeWithDefault, ' ').get(0);
+                        columnTypeOrder.add(dataType);
+                    }
+                }
+                counter++;
+            }
+            return columnTypeOrder;
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        return null;
     }
 
     public List<String> getColumnOrder() {

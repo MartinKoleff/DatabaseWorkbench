@@ -7,8 +7,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class DatabaseEditor { // implements Initializable
-    private static String defaultFolderPath = "D:\\test\\databaseEditor";
-    //private static String defaultFolderPath = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
+//    private static String defaultFolderPath = "D:\\test\\databaseEditor";
+    private static String defaultFolderPath = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
     private static Database selectedDatabase;
     private File defaultFolder = new File(defaultFolderPath);
     private static List<Database> databases = new ArrayList<>();
@@ -100,13 +100,11 @@ public class DatabaseEditor { // implements Initializable
             e.printStackTrace();
         }
     }
-
+    //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
+    //Insert INTO Sample (Name, Id) VALUES ("Ivan", 2)
     public void insert(List<String> columnNames, List<List<String>> columnValues) {
-        //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
-        //Insert INTO Sample (Name, Id) VALUES ("Ivan", 2)
         File file = new File(selectedDatabase.getFullPath());
         List<String> columnNameOrder = selectedDatabase.getColumnOrder();
-
 
         if (file.exists()) {
             for (int i = 0; i < columnValues.size(); i++) {
@@ -121,8 +119,7 @@ public class DatabaseEditor { // implements Initializable
 
     //Double print...
     private void createLine(int columnIndex, List<String> columnNames, List<String> columnNameOrder, List<List<String>> columnValues){
-        //append to lineToInsert based on the columnOrder...
-        String lineToInsert = "";
+        String lineToInsert = ""; //Append to lineToInsert based on the columnOrder...
         int counter = 0;
         boolean containsColumn = false;
 
