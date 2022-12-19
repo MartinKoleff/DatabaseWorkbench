@@ -104,7 +104,7 @@ public class Utility {
         return new String(textToLowerCase);
     }
 
-    public static String concat(List<String> list, char concatChar) {
+    public static String concat(List<String> list, char concatChar) { //Make StringBuilder...
         String concatText = "";
         for (String words : list) {
             concatText += words + concatChar;
@@ -113,7 +113,7 @@ public class Utility {
     }
 
     public static List<String> trimList(List<String> list) {
-        List<String> returnList = new ArrayList();
+        List<String> returnList = new ArrayList<>();
         for (String element : list) {
             if (!element.isEmpty() && !element.isBlank()) {
                 returnList.add(element);
@@ -125,26 +125,61 @@ public class Utility {
 
     static class Parser<T extends Object> {
         //Get column types from dataBase .txt file 2nd row...
-        public static boolean tryParse(List<String> correctColumnType, List<String> userInput) {
-            for (int i = 0; i < correctColumnType.size(); i++) {
-               try {
-                   switch (correctColumnType.get(i)) {
-                       case "int":
-                           //ASCII Table range of numbers try each char...
-                           break;
-                       case "string":
-                           //ASCII Table range of lower/upper case try each char...
-                           break;
-                       case "date":
-                           //Pattern -> dd.mm.yyyy
-                           break;
-                       default:
-                           //Wrong input...
-                           return false;
-                   }
-               }catch (IndexOutOfBoundsException e){
-                   return true;
-               }
+
+        //string columnType, string userInput...
+        public static boolean tryParse(List<String> databaseColumnOrder, List<String> databaseColumnOrderTypes ,List<String> userInputOrder, List<String> data) {
+            for (int i = 0; i < userInputOrder.size(); i++) {
+                try {
+                    String userInputColumnType = getColumnType(userInputOrder.get(i), databaseColumnOrder, databaseColumnOrderTypes);
+
+                    switch (userInputColumnType) {
+                        case "int":
+                            return validateInt(data.get(i));
+                        case "string":
+                            return true;
+//                            return validateString(userInput.get(i)); //ASCII Table range of lower/upper case try each char...
+                        case "date":
+                            return validateDate(data.get(i));
+                        default:
+                            return false; //Wrong input...
+                    }
+                } catch (IndexOutOfBoundsException e) { //The columns for insert might be less than total columns...
+                    return true;
+                }
+            }
+            return true;
+        }
+
+        private static String getColumnType(String userInputColumn, List<String> databaseColumnOrder, List<String> databaseColumnOrderTypes) {
+            for (int i = 0; i < databaseColumnOrder.size(); i++){
+                if(databaseColumnOrder.get(i).equals(userInputColumn)){
+                    return databaseColumnOrderTypes.get(i);
+                }
+            }
+            return null;
+        }
+
+        private static boolean validateDate(String text) {
+            int asciiValue; //Pattern -> dd.mm.yyyy
+            for (int i = 0; i < text.length(); i++) {
+                if ((i == 2 || i == 6) && Utility.charAt(text, 2) == '.') continue;
+
+                asciiValue = (int) Utility.charAt(text, i);
+                if (!(asciiValue <= 57 && asciiValue >= 48)) {
+                    return false;
+                }
+            }
+
+            return text.length() == 10;
+        }
+
+        private static boolean validateInt(String text) {
+            int asciiValue; //ASCII Table range of numbers try each char...
+            for (int i = 0; i < text.length(); i++) {
+                asciiValue = (int) Utility.charAt(text, i);
+                if (!(asciiValue <= 57 && asciiValue >= 48)) {
+                    return false;
+                }
             }
             return true;
         }

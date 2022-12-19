@@ -1,8 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 //Setup DB obj via databaseEditor and edit / insert and delete from here...
 public class Database {
@@ -74,6 +72,34 @@ public class Database {
     public String getFullPath() {
         return fullPath;
     }
+    public List<String> getColumnTypeOrder(List<String> userInputOrder, List<String> c) {
+        try {
+            File file = new File(this.getFullPath());
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            String line;
+            int counter = 1;
+            List<String> columnTypeOrder = new ArrayList<>();
+            String dataTypeWithDefault, dataType;
+            while ((line = br.readLine()) != null) {
+                if(counter == 2){ //2nd line -> columns
+                    List<String> columns = Utility.split(line, '\t');
+                    for (String column: columns){
+                        dataTypeWithDefault = Utility.split(column, ':').get(1);
+                        dataType = Utility.split(dataTypeWithDefault, ' ').get(0);
+                        columnTypeOrder.add(dataType);
+                    }
+                    return columnTypeOrder;
+                }
+                counter++;
+            }
+            return columnTypeOrder;
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        return null;
+    }
 
     public List<String> getColumnTypeOrder() {
         try {
@@ -92,6 +118,7 @@ public class Database {
                         dataType = Utility.split(dataTypeWithDefault, ' ').get(0);
                         columnTypeOrder.add(dataType);
                     }
+                    return columnTypeOrder;
                 }
                 counter++;
             }

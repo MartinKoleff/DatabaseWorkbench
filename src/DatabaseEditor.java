@@ -101,7 +101,8 @@ public class DatabaseEditor { // implements Initializable
         }
     }
     //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
-    //Insert INTO Sample (Name, Id) VALUES ("Ivan", 2)
+    //Insert INTO Sample (Name, Id) VALUES ("Ivan", 2) (3, "Messi") //Invalid command...
+    //Insert INTO Sample (Name, Id) VALUES ("Ivan", 2, 01.01.2002)  //Invalid command...
     public void insert(List<String> columnNames, List<List<String>> columnValues) {
         File file = new File(selectedDatabase.getFullPath());
         List<String> columnNameOrder = selectedDatabase.getColumnOrder();
@@ -113,7 +114,7 @@ public class DatabaseEditor { // implements Initializable
                 }
             }
         } else {
-            return;
+            System.out.println("Database doesn't exist! Please create it before trying to insert values.");
         }
     }
 

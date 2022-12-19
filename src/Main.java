@@ -30,6 +30,7 @@ public class Main {
                     databaseEditor.tableInfo(command);
                     break;
                 case "Insert":  //Insert INTO Sample (Id, Name) VALUES (1, "Иван") //Insert INTO Sample (Name, Id) VALUES ("Mikhail", 2) ("Pedro", 3)
+                    //Split the strings from the start...
                     dataRaw = Utility.split(command, new char[]{' ', ',', '\"', '(', ')'});
                     tableName = dataRaw.get(2);
 
@@ -46,10 +47,11 @@ public class Main {
                         for (int i = 3; i < dataRaw2.size(); i++) {
                             if (Utility.split(dataRaw2.get(1), new char[]{' ', ','}).size()
                                     == Utility.split(dataRaw2.get(i), new char[]{' ', ','}).size()
-                            && Utility.parser.tryParse(selectedDatabase.getColumnTypeOrder(), Utility.split(dataRaw2.get(i), new char[]{' ', ','}))) {
+                            && Utility.parser.tryParse(selectedDatabase.getColumnOrder(), selectedDatabase.getColumnTypeOrder(),
+                                    Utility.split(dataRaw2.get(1), new char[]{' ', ','}), Utility.split(dataRaw2.get(i), new char[]{' ', ','}))){
                                 columnNames.add(Utility.split(dataRaw2.get(i), new char[]{' ', ','}));
                             }else{
-                                System.out.printf("Invalid input %s\n", dataRaw2.get(i));
+                                System.out.printf("Invalid input %s\n", dataRaw2.get(i)); //Adds only the valid inputs...
                             }
                         }
                         databaseEditor.insert(Utility.split(dataRaw2.get(1), new char[]{' ', ','}), columnNames);
