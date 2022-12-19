@@ -40,21 +40,27 @@ public class Main {
                     List<List<String>> columnNames = new ArrayList<>();
                     List<String> dataRaw2 = Utility.trimList(
                             Utility.split(command, new char[]{'(', ')'}));
+
+                    List<String> userInputColumnOrder = null;
+                    List<String> userInput;
+                    List<String> userInputColumnTypes;
                     try {
                         if (!dataRaw.get(1).equals("INTO") && !dataRaw2.get(2).equals(" VALUES ")) return;
 
                         //Add multiple rows...
                         for (int i = 3; i < dataRaw2.size(); i++) {
-                            if (Utility.split(dataRaw2.get(1), new char[]{' ', ','}).size()
-                                    == Utility.split(dataRaw2.get(i), new char[]{' ', ','}).size()
-                            && Utility.parser.tryParse(selectedDatabase.getColumnOrder(), selectedDatabase.getColumnTypeOrder(),
-                                    Utility.split(dataRaw2.get(1), new char[]{' ', ','}), Utility.split(dataRaw2.get(i), new char[]{' ', ','}))){
-                                columnNames.add(Utility.split(dataRaw2.get(i), new char[]{' ', ','}));
+                            userInputColumnOrder = Utility.split(dataRaw2.get(1), new char[]{' ', ','});
+                            userInput = Utility.split(dataRaw2.get(i), new char[]{' ', ','});
+
+                            userInputColumnTypes = selectedDatabase.getUserOrderColumnTypes(userInputColumnOrder);
+                            if (userInputColumnOrder.size() == userInput.size()
+                            && Utility.parser.tryParse(userInput, userInputColumnTypes)){
+                                columnNames.add(selectedDatabase.orderUserInput(userInput, userInputColumnOrder));
                             }else{
                                 System.out.printf("Invalid input %s\n", dataRaw2.get(i)); //Adds only the valid inputs...
                             }
                         }
-                        databaseEditor.insert(Utility.split(dataRaw2.get(1), new char[]{' ', ','}), columnNames);
+                        databaseEditor.insert(userInputColumnOrder, columnNames);
                         columnNames.clear();
 
                     } catch (Exception e) {

@@ -63,42 +63,12 @@ public class Database {
     public void join() {
 
     }
-
-
     public String getTableName() {
         return tableName;
     }
 
     public String getFullPath() {
         return fullPath;
-    }
-    public List<String> getColumnTypeOrder(List<String> userInputOrder, List<String> c) {
-        try {
-            File file = new File(this.getFullPath());
-            BufferedReader br = new BufferedReader(new FileReader(file));
-
-            String line;
-            int counter = 1;
-            List<String> columnTypeOrder = new ArrayList<>();
-            String dataTypeWithDefault, dataType;
-            while ((line = br.readLine()) != null) {
-                if(counter == 2){ //2nd line -> columns
-                    List<String> columns = Utility.split(line, '\t');
-                    for (String column: columns){
-                        dataTypeWithDefault = Utility.split(column, ':').get(1);
-                        dataType = Utility.split(dataTypeWithDefault, ' ').get(0);
-                        columnTypeOrder.add(dataType);
-                    }
-                    return columnTypeOrder;
-                }
-                counter++;
-            }
-            return columnTypeOrder;
-        } catch (FileNotFoundException ex) {
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        return null;
     }
 
     public List<String> getColumnTypeOrder() {
@@ -153,5 +123,43 @@ public class Database {
             throw new RuntimeException(ex);
         }
         return null;
+    }
+
+    public List<String> getUserOrderColumnTypes(List<String> userInputColumnOrder) {
+        List<String> userOrderColumnTypes = new ArrayList<>();
+        List<String> columnTypeOrder = this.getColumnTypeOrder();
+        List<String> columnOrder = this.getColumnOrder();
+
+        int counter = 0;
+        for(int i = 0; i < userInputColumnOrder.size(); i++) {
+            for (String column : columnOrder) {
+                if(column.equals(userInputColumnOrder.get(i))){
+                    userOrderColumnTypes.add(columnTypeOrder.get(counter)); //to fix...
+                }
+                counter++;
+            }
+            counter = 0;
+        }
+
+        return userOrderColumnTypes;
+    }
+
+    public List<String> orderUserInput(List<String> userInput, List<String> userInputColumnOrder) {
+        List<String> userInputDatabaseOrder = new ArrayList<>();
+        List<String> columnTypeOrder = this.getColumnTypeOrder();
+        List<String> columnOrder = this.getColumnOrder();
+
+        int counter = 0;
+        for(int i = 0; i < userInputColumnOrder.size(); i++) {
+            for (String column : columnOrder) {
+                if(column.equals(userInputColumnOrder.get(i))){
+                    userInputDatabaseOrder.add(userInput.get(counter));
+                }
+                counter++;
+            }
+            counter = 0;
+        }
+
+        return userInputDatabaseOrder;
     }
 }

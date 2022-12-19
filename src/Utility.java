@@ -127,19 +127,18 @@ public class Utility {
         //Get column types from dataBase .txt file 2nd row...
 
         //string columnType, string userInput...
-        public static boolean tryParse(List<String> databaseColumnOrder, List<String> databaseColumnOrderTypes ,List<String> userInputOrder, List<String> data) {
-            for (int i = 0; i < userInputOrder.size(); i++) {
+        public static boolean tryParse(List<String> userInput, List<String> userInputColumnTypes) {
+            for (int i = 0; i < userInputColumnTypes.size(); i++) {
                 try {
-                    String userInputColumnType = getColumnType(userInputOrder.get(i), databaseColumnOrder, databaseColumnOrderTypes);
-
-                    switch (userInputColumnType) {
+                    String currentColumnType = userInputColumnTypes.get(i);
+                    switch (currentColumnType) {
                         case "int":
-                            return validateInt(data.get(i));
+                            return validateInt(userInput.get(i));
                         case "string":
                             return true;
 //                            return validateString(userInput.get(i)); //ASCII Table range of lower/upper case try each char...
                         case "date":
-                            return validateDate(data.get(i));
+                            return validateDate(userInput.get(i));
                         default:
                             return false; //Wrong input...
                     }
