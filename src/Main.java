@@ -60,7 +60,7 @@ public class Main {
                                 System.out.printf("Invalid input %s\n", dataRaw2.get(i)); //Adds only the valid inputs...
                             }
                         }
-                        databaseEditor.insert(userInputColumnOrder, columnNames);
+                        databaseEditor.insert(columnNames);
                         columnNames.clear();
 
                     } catch (Exception e) {

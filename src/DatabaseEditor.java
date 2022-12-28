@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class DatabaseEditor { // implements Initializable
-//    private static String defaultFolderPath = "D:\\test\\databaseEditor";
+    //    private static String defaultFolderPath = "D:\\test\\databaseEditor";
     private static String defaultFolderPath = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
     private static Database selectedDatabase;
     private File defaultFolder = new File(defaultFolderPath);
@@ -100,18 +100,17 @@ public class DatabaseEditor { // implements Initializable
             e.printStackTrace();
         }
     }
+
     //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
     //Insert INTO Sample (Name, Id) VALUES ("Ivan", 2) (3, "Messi") //Invalid command...
     //Insert INTO Sample (Name, Id) VALUES ("Ivan", 2, 01.01.2002)  //Invalid command...
-    public void insert(List<String> columnNames, List<List<String>> columnValues) {
+    public void insert(List<List<String>> sortedRows) {
         File file = new File(selectedDatabase.getFullPath());
-        List<String> columnNameOrder = selectedDatabase.getColumnOrder();
-
+        String currentRow;
         if (file.exists()) {
-            for (int i = 0; i < columnValues.size(); i++) {
-                for (int j = 0; j < columnValues.get(i).size(); j++) {
-                    createLine(i, columnNames, columnNameOrder, columnValues);
-                }
+            for (List<String> sortedRow : sortedRows) {
+                currentRow = Utility.concat(sortedRow, '\t');
+                writeInFile(currentRow, true);
             }
         } else {
             System.out.println("Database doesn't exist! Please create it before trying to insert values.");
@@ -119,27 +118,27 @@ public class DatabaseEditor { // implements Initializable
     }
 
     //Double print...
-    private void createLine(int columnIndex, List<String> columnNames, List<String> columnNameOrder, List<List<String>> columnValues){
-        String lineToInsert = ""; //Append to lineToInsert based on the columnOrder...
-        int counter = 0;
-        boolean containsColumn = false;
-
-        for (int k = 0; k < columnNames.size(); k++) {
-            for (int l = 0; l < columnNames.size(); l++) {
-                if (columnNames.get(l).equals(columnNameOrder.get(counter))) {
-                    lineToInsert += columnValues.get(columnIndex).get(l) + "\t";
-                    containsColumn = true;
-                }
-            }
-            if (!containsColumn) {
-                //insert default value...
-            }
-            containsColumn = false;
-            counter++;
-        }
-
-        writeInFile(lineToInsert, true);
-    }
+//    private void createLine(int columnIndex, List<String> columnNames, List<String> columnNameOrder, List<List<String>> columnValues){
+//        String lineToInsert = ""; //Append to lineToInsert based on the columnOrder...
+//        int counter = 0;
+//        boolean containsColumn = false;
+//
+//        for (int k = 0; k < columnNames.size(); k++) {
+//            for (int l = 0; l < columnNames.size(); l++) {
+//                if (columnNames.get(l).equals(columnNameOrder.get(counter))) {
+//                    lineToInsert += columnValues.get(columnIndex).get(l) + "\t";
+//                    containsColumn = true;
+//                }
+//            }
+//            if (!containsColumn) {
+//                //insert default value...
+//            }
+//            containsColumn = false;
+//            counter++;
+//        }
+//
+//        writeInFile(lineToInsert, true);
+//    }
 
     public void dropTable(String command) { //DropTable Sample
         String tableName = Utility.split(command, ' ').get(0);

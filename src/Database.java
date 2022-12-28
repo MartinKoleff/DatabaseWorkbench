@@ -6,8 +6,8 @@ import java.util.List;
 public class Database {
     private String tableName;
     //    private String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
-//    private static String defaultFolder = "D:\\test\\databaseEditor";
-    private static String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
+    private static String defaultFolder = "D:\\test\\databaseEditor";
+    //    private static String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
 
     private String fullPath;
 
@@ -144,22 +144,71 @@ public class Database {
         return userOrderColumnTypes;
     }
 
+    //No columns from user scenario...
     public List<String> orderUserInput(List<String> userInput, List<String> userInputColumnOrder) {
-        List<String> userInputDatabaseOrder = new ArrayList<>();
+        List<String> sortedRow = new ArrayList<>();
         List<String> columnTypeOrder = this.getColumnTypeOrder();
         List<String> columnOrder = this.getColumnOrder();
 
         int counter = 0;
-        for(int i = 0; i < userInputColumnOrder.size(); i++) {
-            for (String column : columnOrder) {
-                if(column.equals(userInputColumnOrder.get(i))){
-                    userInputDatabaseOrder.add(userInput.get(counter));
+        try {
+            for (int i = 0; i < columnOrder.size(); i++) {
+                for (String column : columnOrder) {
+                    if (column.equals(userInputColumnOrder.get(i))) {
+                        sortedRow.add(userInput.get(counter));
+                    }
+                    counter++;
+                }
+
+                //Default value
+                if (sortedRow.size() < i + 1) {
+                    sortedRow.add(this.getDefaultValue(columnOrder.get(i)));
+                }
+                counter = 0;
+            }
+        }catch (IndexOutOfBoundsException e){
+            sortedRow.add(this.getDefaultValue(columnOrder.get(userInputColumnOrder.size())));
+        }
+        return sortedRow;
+    }
+
+    private String getDefaultValue(String userColumn) {
+        List<String> columnOrder = this.getColumnOrder();
+
+        int selectedColumnIndex = 0;
+        for (int i = 0; i < columnOrder.size(); i++){
+            if(columnOrder.get(i).equals(userColumn)){
+                selectedColumnIndex = i;
+            }
+        }
+
+        try {
+            File file = new File(this.getFullPath());
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            String line;
+            int counter = 1;
+            while ((line = br.readLine()) != null) {
+                if(counter == 2) { //2nd line -> columns
+                   try {
+                       List<String> columns = Utility.split(line, '\t');
+                       String selectedColumn = columns.get(selectedColumnIndex);
+                       List<String> columnData = Utility.split(selectedColumn, new char[]{' ', ':'});
+                       if (columnData.size() > 2 && columnData.get(2).equals("default")) {
+                           String defaultValue = columnData.get(3);
+                           return defaultValue;
+                       }
+                   }catch (IndexOutOfBoundsException e) {
+                       //switch case via column name and column type (int -> 0, date -> null, string -> null?)
+                        return null;
+                    }
                 }
                 counter++;
             }
-            counter = 0;
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
-
-        return userInputDatabaseOrder;
+        return null;
     }
 }
