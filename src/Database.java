@@ -281,7 +281,8 @@ public class Database {
                     if (counter >= 3) { //3rd row -> data
                         splitLine = Utility.split(line, '\t');
                         for(int index : selectedColumnIndexes){
-                            filteredRow.append(splitLine.get(index) + "\t");
+                            filteredRow.append(splitLine.get(index))
+                                    .append("\t");
                         }
                         filteredRows.add(filteredRow.toString());
                         filteredRow.setLength(0);
@@ -293,6 +294,35 @@ public class Database {
                 throw new RuntimeException(ex);
             }catch (Exception e){
                 System.out.println("Something went wrong in SELECT...");
+            }
+        }else{
+            //BETWEEN number AND number
+            //IN (name1, name2)
+            String selectedColumn;
+            String mathSign;
+            String comparator;
+            List<String> conditionSplit;
+
+            for(String condition : whereConditions) {
+                conditionSplit = Utility.split(condition, ' ');
+                selectedColumn = conditionSplit.get(0);
+                mathSign = conditionSplit.get(1);
+                comparator = conditionSplit.get(2);
+
+                switch (mathSign){
+                    case "<>": //same as !=
+                        break;
+                    case "==":
+                        break;
+                    case "<=":
+                        break;
+                    case ">=":
+                        break;
+                    case "<":
+                        break;
+                    case ">":
+                        break;
+                }
             }
         }
     }
