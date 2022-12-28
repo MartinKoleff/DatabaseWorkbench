@@ -57,6 +57,30 @@ public class Utility {
         return splitText;
     }
 
+    public static List<String> split(String text, String word) {
+        List<String> splitText = new ArrayList<>();
+        int startIndex = 0;
+
+        for(int i = 0; i < text.length() - word.length(); i++){
+           if(Utility.substring(text, i, word.length() + i).equals(word)) {
+               splitText.add(Utility.substring(text, startIndex, i));
+               i += word.length();
+               startIndex = i;
+           }
+        }
+
+        //has split -> add last text
+        if (startIndex != 0) {
+            if (startIndex == text.length()) return splitText;
+            splitText.add(substring(text, startIndex, text.length()));
+        }
+//        else {
+//            splitText.add(text);
+//        }
+        return splitText;
+    }
+
+
     public static String substring(String text, int index) {
         char[] substringArray = new char[text.length() - index];
         int counter = 0;
@@ -122,6 +146,7 @@ public class Utility {
 
         return returnList;
     }
+
 
     static class Parser<T extends Object> {
         //Get column types from dataBase .txt file 2nd row...

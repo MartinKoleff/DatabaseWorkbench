@@ -29,27 +29,6 @@ public class DatabaseEditor { // implements Initializable
     }
 
     public void createTable(String command) {
-        setupData(command);
-    }
-
-    //Run on launch (implement interface?)
-    private void loadData(String path) {
-        File folder;
-        if (path.equals("default")) {
-            folder = new File(defaultFolderPath);
-        } else {
-            folder = new File(path);
-        }
-        Database database;
-        databases.clear();
-        for (File file :
-                folder.listFiles()) {
-            database = new Database(Utility.split(file.getName(), '.').get(0), true);
-            databases.add(database);
-        }
-    }
-
-    private void setupData(String command) { //CreateTable Sample(Id:int, Name:string, BirthDate:date default "01.01.2022")
         List<String> dataRaw = Utility.split(command, new char[]{'(', ':', ',', ' ', '\"', ')'});
         selectedDatabase = new Database(dataRaw.get(1), false);
         databases.add(selectedDatabase);
@@ -91,6 +70,23 @@ public class DatabaseEditor { // implements Initializable
         }
     }
 
+    //Run on launch (implement interface?)
+    private void loadData(String path) {
+        File folder;
+        if (path.equals("default")) {
+            folder = new File(defaultFolderPath);
+        } else {
+            folder = new File(path);
+        }
+        Database database;
+        databases.clear();
+        for (File file :
+                folder.listFiles()) {
+            database = new Database(Utility.split(file.getName(), '.').get(0), true);
+            databases.add(database);
+        }
+    }
+
     private void writeInFile(String text, boolean hasNewLine) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(selectedDatabase.getFullPath(), true));
@@ -104,10 +100,6 @@ public class DatabaseEditor { // implements Initializable
         }
     }
 
-    //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
-    //Insert INTO Sample (Name, Id) VALUES ("Ivan", 2) (3, "Messi") //Invalid command...
-    //Insert INTO Sample (Name, Id) VALUES ("Ivan", 2, 01.01.2002)  //Invalid command...
-    //Insert INTO Sample (Name) VALUES ("Mikhail") ("Pedro") //Id should get latest...
     public void insert(List<List<String>> sortedRows) {
         File file = new File(selectedDatabase.getFullPath());
         String currentRow;

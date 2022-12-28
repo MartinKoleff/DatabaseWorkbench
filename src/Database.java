@@ -41,9 +41,6 @@ public class Database {
         }
     }
 
-    public void select(String command) { //Select Name, DateBirth FROM Sample WHERE Id <> 5 AND DateBirth > "01.01.2000"
-
-    }
 
     public void deleteDatabase() {
         File file = new File(this.getFullPath());
@@ -255,16 +252,49 @@ public class Database {
         }
         return userInputColumnOrder.size() + defaultCounter == columnRowSplit.size();
     }
+
+    public void select(List<String> selectedColumns, List<String> whereConditions) {
+        List<String> filteredRows = new ArrayList<>();
+        List<Integer> selectedColumnIndexes = new ArrayList<>();
+        List<String> columnOrder = this.getColumnOrder();
+
+        //Get selected columns indexes...
+        for (int totalColumns = 0; totalColumns < selectedColumns.size(); totalColumns++) {
+            for (int i = 0; i < columnOrder.size(); i++) {
+                if(selectedColumns.get(totalColumns).equals(columnOrder.get(i))){
+                    selectedColumnIndexes.add(i);
+                    i = columnOrder.size();
+                }
+            }
+        }
+
+        if (whereConditions.isEmpty()) {
+            try {
+                File file = new File(this.getFullPath());
+                BufferedReader br = new BufferedReader(new FileReader(file));
+
+                String line;
+                int counter = 1;
+                List<String> splitLine;
+                StringBuilder filteredRow = new StringBuilder(); //to make my own StringBuilder...
+                while ((line = br.readLine()) != null) {
+                    if (counter >= 3) { //3rd row -> data
+                        splitLine = Utility.split(line, '\t');
+                        for(int index : selectedColumnIndexes){
+                            filteredRow.append(splitLine.get(index) + "\t");
+                        }
+                        filteredRows.add(filteredRow.toString());
+                        filteredRow.setLength(0);
+                    }
+                    counter++;
+                }
+            } catch (FileNotFoundException ex) {
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }catch (Exception e){
+                System.out.println("Something went wrong in SELECT...");
+            }
+        }
+    }
 }
 
-//   switch (columnTypeOrder.get(selectedColumnIndex)) {
-//                            case "Int":
-//                                String lastLine = null;
-//                                while ((line = br.readLine()) != null) {
-//                                    lastLine = line;
-//                                }
-//                                List<String> lastRowData = Utility.split(lastLine, new char[]{' ', ':'});
-//                                String lastRowIndex
-//                            default:
-//                                return null;
-//                        }

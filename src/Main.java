@@ -16,22 +16,19 @@ public class Main {
         while (!command.equals("Stop")) {
             commandType = Utility.split(command, ' ').get(0); //Utility.toLowerCase()
             switch (commandType) {
-                case "CreateTable": //CreateTable Sample(Id:int, Name:string, BirthDate:date default "01.01.2022")
-                    //To refactor as insert...
-
+                case "CreateTable":
                     databaseEditor.createTable(command);
                     break;
-                case "DropTable": //DropTable Sample
+                case "DropTable":
                     databaseEditor.dropTable(command);
                     break;
-                case "ListTables": //ListTables default
+                case "ListTables":
                     databaseEditor.listTables(command);
                     break;
-                case "TableInfo": //TableInfo Sample
+                case "TableInfo":
                     databaseEditor.tableInfo(command);
                     break;
-                case "Insert":  //Insert INTO Sample (Id, Name) VALUES (1, "Иван") //Insert INTO Sample (Name, Id) VALUES ("Mikhail", 2) ("Pedro", 3)
-                    //Split the strings from the start...
+                case "Insert":
                     dataRaw = Utility.split(command, new char[]{' ', ',', '\"', '(', ')'});
                     tableName = dataRaw.get(2);
 
@@ -42,7 +39,7 @@ public class Main {
                     List<String> dataRaw2 = Utility.trimList(
                             Utility.split(command, new char[]{'(', ')'}));
 
-                    List<String> userInputColumnOrder = null;
+                    List<String> userInputColumnOrder;
                     List<String> userInputData;
                     List<String> userInputColumnTypes;
                     try {
@@ -54,11 +51,11 @@ public class Main {
                             userInputData = Utility.split(dataRaw2.get(i), new char[]{' ', ','});
                             userInputColumnTypes = selectedDatabase.getUserOrderColumnTypes(userInputColumnOrder);
 
+                            //All non-default columns are used...
                             if (!selectedDatabase.defaultColumnsAreUsed(userInputColumnOrder)) {
                                 continue;
                             }
 
-                            //get defaults split counter...
                             if (userInputColumnOrder.size() == userInputData.size()
                                     && Utility.parser.tryParse(userInputData, userInputColumnTypes)) {
                                 rows.add(selectedDatabase.orderUserInput(userInputData, userInputColumnOrder));
@@ -78,15 +75,24 @@ public class Main {
                         break;
                     }
                     break;
-                case "Select": //Select Name, DateBirth FROM Sample WHERE Id <> 5 AND DateBirth > "01.01.2000"
-                    dataRaw = Utility.split(command, new char[]{' ', ',', '\"'});
+                case "Select":
+                    dataRaw = Utility.split(command, new char[]{' ', ',', '\"', '(', ')'});
+
+                    //Validate command...
+                    if (!dataRaw.contains("FROM")) {
+                        break;
+                    }
 
                     int fromIndex = dataRaw.indexOf("FROM");
                     tableName = dataRaw.get(fromIndex + 1);
+
                     selectedDatabase = new Database(tableName, false);
                     databaseEditor.setSelectedDatabase(selectedDatabase);
 
-                    selectedDatabase.select(command);
+                    List<String> selectedColumns = Utility.split(Utility.split(command, new char[]{'(', ')'}).get(1), new char[]{' ', ','});
+                    List<String> whereConditions = Utility.split(command, "WHERE");
+
+                    selectedDatabase.select(selectedColumns, whereConditions);
                     break;
                 case "Join":
                     break;
@@ -105,3 +111,17 @@ public class Main {
         }
     }
 }
+//CreateTable Sample(Id:int, Name:string, BirthDate:date default "01.01.2022")
+//DropTable Sample
+//ListTables default
+//TableInfo Sample
+//Insert INTO Sample (Id, Name) VALUES (1, "Иван")
+//Insert INTO Sample (Name, Id) VALUES ("Mikhail", 2) ("Pedro", 3)
+//Insert INTO Sample (Name, Id) VALUES ("Ivan", 2) (3, "Messi") //Invalid command...
+//Insert INTO Sample (Name, Id) VALUES ("Ivan", 2, 01.01.2002)  //Invalid command...
+//Insert INTO Sample (Name) VALUES ("Mikhail") ("Pedro") //Invalid command...
+//Insert INTO Sample (Id, Name) VALUES () () //Invalid command...
+//Insert INTO Sample (Name) VALUES () () //Invalid command...
+//Select (Name, DateBirth) FROM Sample WHERE Id <> 5 AND DateBirth > "01.01.2000"
+//Select (Name, DateBirth) FROM Sample
+//<> -> different from
