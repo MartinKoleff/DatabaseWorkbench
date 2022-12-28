@@ -149,15 +149,6 @@ public class Utility {
             return true;
         }
 
-        private static String getColumnType(String userInputColumn, List<String> databaseColumnOrder, List<String> databaseColumnOrderTypes) {
-            for (int i = 0; i < databaseColumnOrder.size(); i++){
-                if(databaseColumnOrder.get(i).equals(userInputColumn)){
-                    return databaseColumnOrderTypes.get(i);
-                }
-            }
-            return null;
-        }
-
         private static boolean validateDate(String text) {
             int asciiValue; //Pattern -> dd.mm.yyyy
             for (int i = 0; i < text.length(); i++) {

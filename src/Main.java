@@ -1,4 +1,3 @@
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -18,6 +17,8 @@ public class Main {
             commandType = Utility.split(command, ' ').get(0); //Utility.toLowerCase()
             switch (commandType) {
                 case "CreateTable": //CreateTable Sample(Id:int, Name:string, BirthDate:date default "01.01.2022")
+                    //To refactor as insert...
+
                     databaseEditor.createTable(command);
                     break;
                 case "DropTable": //DropTable Sample
@@ -37,12 +38,12 @@ public class Main {
                     selectedDatabase = new Database(tableName, false);
                     databaseEditor.setSelectedDatabase(selectedDatabase);
 
-                    List<List<String>> columnNames = new ArrayList<>();
+                    List<List<String>> rows = new ArrayList<>();
                     List<String> dataRaw2 = Utility.trimList(
                             Utility.split(command, new char[]{'(', ')'}));
 
                     List<String> userInputColumnOrder = null;
-                    List<String> userInput;
+                    List<String> userInputData;
                     List<String> userInputColumnTypes;
                     try {
                         if (!dataRaw.get(1).equals("INTO") && !dataRaw2.get(2).equals(" VALUES ")) return;
@@ -50,19 +51,28 @@ public class Main {
                         //Add multiple rows...
                         for (int i = 3; i < dataRaw2.size(); i++) {
                             userInputColumnOrder = Utility.split(dataRaw2.get(1), new char[]{' ', ','});
-                            userInput = Utility.split(dataRaw2.get(i), new char[]{' ', ','});
-
+                            userInputData = Utility.split(dataRaw2.get(i), new char[]{' ', ','});
                             userInputColumnTypes = selectedDatabase.getUserOrderColumnTypes(userInputColumnOrder);
-                            if (userInputColumnOrder.size() == userInput.size()
-                            && Utility.parser.tryParse(userInput, userInputColumnTypes)){
-                                columnNames.add(selectedDatabase.orderUserInput(userInput, userInputColumnOrder));
-                            }else{
+
+                            if (!selectedDatabase.defaultColumnsAreUsed(userInputColumnOrder)) {
+                                continue;
+                            }
+
+                            //get defaults split counter...
+                            if (userInputColumnOrder.size() == userInputData.size()
+                                    && Utility.parser.tryParse(userInputData, userInputColumnTypes)) {
+                                rows.add(selectedDatabase.orderUserInput(userInputData, userInputColumnOrder));
+                            } else {
                                 System.out.printf("Invalid input %s\n", dataRaw2.get(i)); //Adds only the valid inputs...
                             }
                         }
-                        databaseEditor.insert(columnNames);
-                        columnNames.clear();
 
+                        if (rows.isEmpty()) {
+                            throw new Exception();
+                        }
+
+                        databaseEditor.insert(rows);
+                        rows.clear();
                     } catch (Exception e) {
                         System.out.println("Invalid command. Please try again.");
                         break;
@@ -93,7 +103,5 @@ public class Main {
 
             command = sc.nextLine();
         }
-//        databaseEditor.createTable("CreateTable Sample(Id:int, Name:string, BirthDate:date default “01.01.2022”)");
-//        databaseEditor.dropTable("Sample");
     }
 }

@@ -5,9 +5,9 @@ import java.util.List;
 //Setup DB obj via databaseEditor and edit / insert and delete from here...
 public class Database {
     private String tableName;
-    //    private String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
     private static String defaultFolder = "D:\\test\\databaseEditor";
-    //    private static String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
+//    private static String defaultFolder = "C:\\Users\\Martin\\IdeaProjects\\DatabaseWorkbench";
+//    private static String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
 
     private String fullPath;
 
@@ -63,6 +63,7 @@ public class Database {
     public void join() {
 
     }
+
     public String getTableName() {
         return tableName;
     }
@@ -81,9 +82,9 @@ public class Database {
             List<String> columnTypeOrder = new ArrayList<>();
             String dataTypeWithDefault, dataType;
             while ((line = br.readLine()) != null) {
-                if(counter == 2){ //2nd line -> columns
+                if (counter == 2) { //2nd line -> columns
                     List<String> columns = Utility.split(line, '\t');
-                    for (String column: columns){
+                    for (String column : columns) {
                         dataTypeWithDefault = Utility.split(column, ':').get(1);
                         dataType = Utility.split(dataTypeWithDefault, ' ').get(0);
                         columnTypeOrder.add(dataType);
@@ -109,9 +110,9 @@ public class Database {
             int counter = 1;
             List<String> columnOrder = new ArrayList<>();
             while ((line = br.readLine()) != null) {
-                if(counter == 2){ //2nd line -> columns
+                if (counter == 2) { //2nd line -> columns
                     List<String> columns = Utility.split(line, '\t');
-                    for (String column: columns){
+                    for (String column : columns) {
                         columnOrder.add(Utility.split(column, ':').get(0));
                     }
                 }
@@ -125,16 +126,36 @@ public class Database {
         return null;
     }
 
+    private String getColumnRow() {
+        try {
+            File file = new File(this.getFullPath());
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            String line;
+            int counter = 1;
+            while ((line = br.readLine()) != null) {
+                if (counter == 2) { //2nd line -> columns
+                    return line;
+                }
+                counter++;
+            }
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        return null;
+    }
+
     public List<String> getUserOrderColumnTypes(List<String> userInputColumnOrder) {
         List<String> userOrderColumnTypes = new ArrayList<>();
         List<String> columnTypeOrder = this.getColumnTypeOrder();
         List<String> columnOrder = this.getColumnOrder();
 
         int counter = 0;
-        for(int i = 0; i < userInputColumnOrder.size(); i++) {
+        for (int i = 0; i < userInputColumnOrder.size(); i++) {
             for (String column : columnOrder) {
-                if(column.equals(userInputColumnOrder.get(i))){
-                    userOrderColumnTypes.add(columnTypeOrder.get(counter)); //to fix...
+                if (column.equals(userInputColumnOrder.get(i))) {
+                    userOrderColumnTypes.add(columnTypeOrder.get(counter));
                 }
                 counter++;
             }
@@ -151,33 +172,40 @@ public class Database {
         List<String> columnOrder = this.getColumnOrder();
 
         int counter = 0;
-        try {
-            for (int i = 0; i < columnOrder.size(); i++) {
-                for (String column : columnOrder) {
-                    if (column.equals(userInputColumnOrder.get(i))) {
+        String column;
+        for (int i = 0; i < columnOrder.size(); i++) {
+            column = columnOrder.get(i);
+            for (int j = 0; j < columnOrder.size(); j++) {
+                try {
+                    if (column.equals(userInputColumnOrder.get(j))) {
                         sortedRow.add(userInput.get(counter));
                     }
-                    counter++;
-                }
-
-                //Default value
-                if (sortedRow.size() < i + 1) {
+                } catch (IndexOutOfBoundsException e) {
+                    if (sortedRow.size() >= i + 1) {
+                        break;
+                    }
                     sortedRow.add(this.getDefaultValue(columnOrder.get(i)));
+                    j = columnOrder.size();
                 }
-                counter = 0;
+                counter++;
             }
-        }catch (IndexOutOfBoundsException e){
-            sortedRow.add(this.getDefaultValue(columnOrder.get(userInputColumnOrder.size())));
+
+            //Default value
+            if (sortedRow.size() < i + 1) {
+                sortedRow.add(this.getDefaultValue(columnOrder.get(i)));
+            }
+            counter = 0;
         }
         return sortedRow;
     }
 
     private String getDefaultValue(String userColumn) {
         List<String> columnOrder = this.getColumnOrder();
+        List<String> columnTypeOrder = this.getColumnTypeOrder();
 
         int selectedColumnIndex = 0;
-        for (int i = 0; i < columnOrder.size(); i++){
-            if(columnOrder.get(i).equals(userColumn)){
+        for (int i = 0; i < columnOrder.size(); i++) {
+            if (columnOrder.get(i).equals(userColumn)) {
                 selectedColumnIndex = i;
             }
         }
@@ -189,17 +217,16 @@ public class Database {
             String line;
             int counter = 1;
             while ((line = br.readLine()) != null) {
-                if(counter == 2) { //2nd line -> columns
-                   try {
-                       List<String> columns = Utility.split(line, '\t');
-                       String selectedColumn = columns.get(selectedColumnIndex);
-                       List<String> columnData = Utility.split(selectedColumn, new char[]{' ', ':'});
-                       if (columnData.size() > 2 && columnData.get(2).equals("default")) {
-                           String defaultValue = columnData.get(3);
-                           return defaultValue;
-                       }
-                   }catch (IndexOutOfBoundsException e) {
-                       //switch case via column name and column type (int -> 0, date -> null, string -> null?)
+                if (counter == 2) { //2nd line -> columns
+                    try {
+                        List<String> columns = Utility.split(line, '\t');
+                        String selectedColumn = columns.get(selectedColumnIndex);
+                        List<String> columnData = Utility.split(selectedColumn, new char[]{' ', ':'});
+                        if (columnData.size() > 2 && columnData.get(2).equals("default")) {
+                            String defaultValue = columnData.get(3);
+                            return defaultValue;
+                        }
+                    } catch (IndexOutOfBoundsException e) {
                         return null;
                     }
                 }
@@ -211,4 +238,33 @@ public class Database {
         }
         return null;
     }
+
+    //If all default columns are used in the user command
+    public boolean defaultColumnsAreUsed(List<String> userInputColumnOrder) {
+        String columnRow = this.getColumnRow();
+        List<String> columnRowSplit = Utility.split(columnRow, '\t');
+        List<String> columnData;
+        String columnName;
+        int defaultCounter = 0;
+        for (String column : columnRowSplit) {
+            columnData = Utility.split(column, new char[]{' ', ':'});
+            columnName = columnData.get(0);
+            if (columnData.size() > 2 && columnData.get(2).equals("default") && !userInputColumnOrder.contains(columnName)) {
+                defaultCounter++;
+            }
+        }
+        return userInputColumnOrder.size() + defaultCounter == columnRowSplit.size();
+    }
 }
+
+//   switch (columnTypeOrder.get(selectedColumnIndex)) {
+//                            case "Int":
+//                                String lastLine = null;
+//                                while ((line = br.readLine()) != null) {
+//                                    lastLine = line;
+//                                }
+//                                List<String> lastRowData = Utility.split(lastLine, new char[]{' ', ':'});
+//                                String lastRowIndex
+//                            default:
+//                                return null;
+//                        }
