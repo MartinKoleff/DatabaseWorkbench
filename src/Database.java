@@ -324,12 +324,14 @@ public class Database {
                 conditionSplit = Utility.split(condition, ' ');
                 selectedColumn = conditionSplit.get(0);
                 mathSign = conditionSplit.get(1);
-                comparator = conditionSplit.get(2);
+                comparator = Utility.trimList(Utility.split(conditionSplit.get(2), '\"')).get(0);
 
                 String columnValue;
                 String columnName;
                 String columnType;
                 Node head;
+
+                MyLinkedList filteredList;
                 switch (mathSign) {
                     case "!=":
                     case "<>": //same as !=
@@ -375,7 +377,8 @@ public class Database {
                         //parse column...
 
                         head = data.findNodeAt(1);
-                        for (int i = 1; i < data.getListSize(); i++) {
+                        filteredList = data;
+                        for (int i = 1; i < filteredList.getListSize(); i++) {
                             for (int j = 0; j < head.item.size(); j++) { //Each column in a row...
                                 columnValue = head.item.get(j);
                                 columnName = columnOrder.get(j);
@@ -384,13 +387,14 @@ public class Database {
                                     if (Utility.parser.tryParse(columnValue, columnType)) { //Valid data...
                                         switch (columnType) {
                                             case "date":
-                                                DateFormat format = new SimpleDateFormat("dd.mm.yyyy", Locale.ENGLISH);
+                                                DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
                                                 try {
                                                     Date tableDate = format.parse(columnValue);
                                                     Date comparatorDate = format.parse(comparator);
 
-                                                    if (Utility.parser.compareDates(tableDate, comparatorDate, mathSign)) {
-                                                        filteredRows.add(filterRow(selectedColumns, head.item));
+                                                    if (!Utility.parser.compareDates(tableDate, comparatorDate, mathSign)) {
+//                                                        System.out.println("yey");
+                                                        filteredRows.remove(filterRow(selectedColumns, head.item));
                                                     }
                                                 } catch (ParseException e) {
                                                     return;
@@ -402,9 +406,9 @@ public class Database {
                                                 try {
                                                     int tableNumber = Integer.parseInt(columnValue);
                                                     int comparatorNumber = Integer.parseInt(comparator);
-                                                    if (Utility.parser.compareInts(tableNumber, comparatorNumber, mathSign)) {
-                                                        System.out.println("yeyy");
-                                                        filteredRows.add(filterRow(selectedColumns, head.item));
+                                                    if (!Utility.parser.compareInts(tableNumber, comparatorNumber, mathSign)) {
+//                                                        System.out.println("yeyy");
+                                                        filteredRows.remove(filterRow(selectedColumns, head.item));
                                                     }
                                                 } catch (ParseException e) {
                                                     return;
@@ -419,12 +423,12 @@ public class Database {
                             }
                             head = head.next; //Change row...
                         }
-                        //Print filteredRows...
                         break;
                     default:
                         System.out.println("Wrong select operator. Please try again!");
                         break;
                 }
+                filteredRows.forEach(System.out::println);
             }
         }
     }
@@ -437,9 +441,9 @@ public class Database {
         List<String> columnOrder = this.getColumnOrder();
 
         for (int i = 0; i < selectedColumns.size(); i++) {
-            for (String column : columnOrder) {
-                if (column.equals(selectedColumns.get(i))) {
-                    filteredRow.add(splitRow.get(i));
+            for (int j = 0; j < columnOrder.size(); j++) {
+                if (columnOrder.get(j).equals(selectedColumns.get(i))) {
+                    filteredRow.add(splitRow.get(j));
                 }
             }
         }

@@ -68,6 +68,7 @@ public class DatabaseEditor { // implements Initializable
             }
         } catch (IndexOutOfBoundsException e) {
         }
+        writeInFile("", true);
     }
 
     //Run on launch (implement interface?)

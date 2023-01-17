@@ -215,7 +215,7 @@ public class Utility {
             return true;
         }
 
-        public boolean compareDates(Date date1, Date date2, String mathSign) throws Exception{
+        public static boolean compareDates(Date date1, Date date2, String mathSign) throws Exception{
             int result = date1.compareTo(date2);
             switch (mathSign) {
                 case "<=":
