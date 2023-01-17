@@ -2,8 +2,13 @@ import DataStructures.MyLinkedList;
 import DataStructures.Node;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 //Setup DB obj via databaseEditor and edit / insert and delete from here...
 public class Database {
@@ -24,13 +29,13 @@ public class Database {
         this.tableName = tableName;
         fullPath = defaultFolder + "\\" + tableName + ".txt";
 
-        if (loadData) { //reset isLoaded in insert / add the new row?
+        if (loadData) {
             loadData();
         }
     }
 
     private void loadData() {
-        if (!isLoaded) {
+        if (!isLoaded) {  //reset isLoaded in insert / add the new row?
             try {
                 File file = new File(this.getFullPath());
                 BufferedReader br = new BufferedReader(new FileReader(file));
@@ -268,9 +273,13 @@ public class Database {
         List<List<String>> filteredRows = new ArrayList<>();
         List<Integer> selectedColumnIndexes = new ArrayList<>();
         List<String> columnOrder = this.getColumnOrder();
+        List<String> columnTypeOrder = this.getColumnTypeOrder();
+        boolean showAllColumns = false;
 
-        //TO ADD SELECT *
-        //Get selected columns indexes...
+        if (selectedColumns.get(0).equals("*")) {
+            showAllColumns = true;
+        }
+
         for (int totalColumns = 0; totalColumns < selectedColumns.size(); totalColumns++) {
             for (int i = 0; i < columnOrder.size(); i++) {
                 if (selectedColumns.get(totalColumns).equals(columnOrder.get(i))) {
@@ -319,6 +328,7 @@ public class Database {
 
                 String columnValue;
                 String columnName;
+                String columnType;
                 Node head;
                 switch (mathSign) {
                     case "!=":
@@ -357,6 +367,55 @@ public class Database {
                         }
                         break;
                     case "<=":
+                        loadData();
+                        //get column type (int or date)...
+                        //parse column...
+
+                        head = data.findNodeAt(1);
+                        for (int i = 1; i < data.getListSize(); i++) {
+                            for (int j = 0; j < head.item.size(); j++) { //Each column in a row...
+                                columnValue = head.item.get(0);
+                                columnName = columnOrder.get(j);
+                                columnType = columnTypeOrder.get(j);
+                                if (columnName.equals(selectedColumn)) {
+                                    if (Utility.parser.tryParse(columnValue, columnType)) { //Valid data...
+                                        switch (columnType) {
+                                            case "date":
+                                                DateFormat format = new SimpleDateFormat("dd.mm.yyyy", Locale.ENGLISH);
+                                                try {
+                                                    Date tableDate = format.parse(columnValue);
+                                                    Date comparatorDate = format.parse(comparator);
+
+                                                    if (Utility.parser.compareDates(tableDate, comparatorDate, mathSign)) {
+                                                        filteredRows.add(filterRow(selectedColumns, head.item));
+                                                    }
+                                                } catch (ParseException e) {
+                                                    return;
+                                                } catch (Exception e) { //compareDates error handling...
+                                                    return;
+                                                }
+                                                break;
+                                            case "int":
+                                                try {
+                                                    int tableNumber = Integer.parseInt(columnValue);
+                                                    int comparatorNumber = Integer.parseInt(comparator);
+                                                    if (Utility.parser.compareInts(tableNumber, comparatorNumber, mathSign)) {
+                                                        System.out.println("yeyy");
+                                                        filteredRows.add(filterRow(selectedColumns, head.item));
+                                                    }
+                                                } catch (ParseException e) {
+                                                    return;
+                                                } catch (Exception e) { //compareInts error handling...
+                                                    return;
+                                                }
+                                                break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                            head = head.next; //Change row...
+                        }
                         break;
                     case ">=":
                         break;

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Utility {
@@ -61,22 +62,21 @@ public class Utility {
         List<String> splitText = new ArrayList<>();
         int startIndex = 0;
 
-        for(int i = 0; i < text.length() - word.length(); i++){
-           if(Utility.substring(text, i, word.length() + i).equals(word)) {
-               splitText.add(Utility.substring(text, startIndex, i));
-               i += word.length();
-               startIndex = i;
-           }
+        for (int i = 0; i < text.length() - word.length(); i++) {
+            if (Utility.substring(text, i, word.length() + i).equals(word)) {
+                splitText.add(Utility.substring(text, startIndex, i));
+                i += word.length();
+                startIndex = i;
+            }
         }
 
         //has split -> add last text
         if (startIndex != 0) {
             if (startIndex == text.length()) return splitText;
             splitText.add(substring(text, startIndex, text.length()));
+        } else {
+            splitText.add(text);
         }
-//        else {
-//            splitText.add(text);
-//        }
         return splitText;
     }
 
@@ -107,7 +107,7 @@ public class Utility {
 
     public static String join(List<String> list, String delimiter) { //Make StringBuilder...
         String concatText = "";
-        for (int i = 0; i < list.size() - 1; i++) {
+        for (int i = 0; i <= list.size() - 1; i++) {
             concatText += list.get(i) + delimiter;
         }
         return concatText;
@@ -149,9 +149,8 @@ public class Utility {
 
 
     static class Parser<T extends Object> {
-        //Get column types from dataBase .txt file 2nd row...
 
-        //string columnType, string userInput...
+        //Get column types from dataBase .txt file 2nd row...
         public static boolean tryParse(List<String> userInput, List<String> userInputColumnTypes) {
             for (int i = 0; i < userInputColumnTypes.size(); i++) {
                 try {
@@ -172,6 +171,23 @@ public class Utility {
                 }
             }
             return true;
+        }
+
+        public static boolean tryParse(String userInput, String userInputColumnType) {
+            try {
+                switch (Utility.toLowerCase(userInputColumnType)) {
+                    case "int":
+                        return validateInt(userInput);
+                    case "string":
+                        return true;
+                    case "date":
+                        return validateDate(userInput);
+                    default:
+                        return false; //Wrong input...
+                }
+            } catch (IndexOutOfBoundsException e) {
+                return true;
+            }
         }
 
         private static boolean validateDate(String text) {
@@ -197,6 +213,45 @@ public class Utility {
                 }
             }
             return true;
+        }
+
+        public boolean compareDates(Date date1, Date date2, String mathSign) throws Exception{
+            int result = date1.compareTo(date2);
+            switch (mathSign) {
+                case "<=":
+                    return result <= 0;
+                case "<":
+                    return result < 0;
+                case ">=":
+                    return result >= 0;
+                case ">":
+                    return result > 0;
+                case "=":
+                    return result == 0;
+                case "<>":
+                    return result != 0;
+                default:
+                    throw new Exception("Invalid math sign.");
+            }
+        }
+
+        public boolean compareInts(int number1, int number2, String mathSign) throws Exception {
+            switch (mathSign) {
+                case "<=":
+                    return number1 <= number2;
+                case "<":
+                    return number1 < number2;
+                case ">=":
+                    return number1 >= number2;
+                case ">":
+                    return number1 > number2;
+                case "=":
+                    return number1 == number2;
+                case "<>":
+                    return number1 != number2;
+                default:
+                    throw new Exception("Invalid math sign.");
+            }
         }
     }
 }
