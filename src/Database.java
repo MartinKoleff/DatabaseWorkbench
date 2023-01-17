@@ -1,3 +1,6 @@
+import DataStructures.MyLinkedList;
+import DataStructures.Node;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,37 +13,46 @@ public class Database {
 //    private static String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
 
     private String fullPath;
-
+    private boolean isLoaded = false;
     //initialize from file?
     private List<String> columnNames = new ArrayList<>();
-    private List<List<Object>> data = new ArrayList<>();
+
+    //In every container there is a row from the DB
+    private MyLinkedList data = new MyLinkedList();
 
     public Database(String tableName, boolean loadData) {
         this.tableName = tableName;
         fullPath = defaultFolder + "\\" + tableName + ".txt";
 
-        if (loadData) {
+        if (loadData) { //reset isLoaded in insert / add the new row?
             loadData();
         }
     }
 
     private void loadData() {
-        try {
-            File file = new File(this.getFullPath());
-            BufferedReader br = new BufferedReader(new FileReader(file));
+       if(!isLoaded) {
+           try {
+               File file = new File(this.getFullPath());
+               BufferedReader br = new BufferedReader(new FileReader(file));
 
-            String line;
-            while ((line = br.readLine()) != null) {
-                //Put in list...
-                System.out.println(line);
-            }
-            System.out.println();
-        } catch (FileNotFoundException ex) {
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+               String line;
+               int counter = 1;
+               while ((line = br.readLine()) != null) {
+                   //Put in list...
+                   System.out.println(line);
+                   if(counter >= 2) {
+                       data.insertNode(Utility.split(line, '\t'));
+                   }
+                   counter++;
+               }
+               isLoaded = true;
+               System.out.println();
+           } catch (FileNotFoundException ex) {
+           } catch (IOException ex) {
+               throw new RuntimeException(ex);
+           }
+       }
     }
-
 
     public void deleteDatabase() {
         File file = new File(this.getFullPath());
@@ -246,7 +258,7 @@ public class Database {
         for (String column : columnRowSplit) {
             columnData = Utility.split(column, new char[]{' ', ':'});
             columnName = columnData.get(0);
-            if (columnData.size() > 2 && columnData.get(2).equals("default") && !userInputColumnOrder.contains(columnName)) {
+            if (columnData.size() > 2 && columnData.get(2).equals("default") || !userInputColumnOrder.contains(columnName)) {
                 defaultCounter++;
             }
         }
@@ -258,6 +270,7 @@ public class Database {
         List<Integer> selectedColumnIndexes = new ArrayList<>();
         List<String> columnOrder = this.getColumnOrder();
 
+        //TO ADD SELECT *
         //Get selected columns indexes...
         for (int totalColumns = 0; totalColumns < selectedColumns.size(); totalColumns++) {
             for (int i = 0; i < columnOrder.size(); i++) {
@@ -296,8 +309,6 @@ public class Database {
                 System.out.println("Something went wrong in SELECT...");
             }
         }else{
-            //BETWEEN number AND number
-            //IN (name1, name2)
             String selectedColumn;
             String mathSign;
             String comparator;
@@ -311,8 +322,20 @@ public class Database {
 
                 switch (mathSign){
                     case "<>": //same as !=
+                        loadData();
+                        List<String> dataRaw = new ArrayList<>();
+
+                        Node head = data.findNodeAt(1);
+                        for (int i = 0; i < data.getListSize(); i++){
+                            //columnName
+                            //columnType
+                            //if default...
+
+                            head = head.next;
+                        }
                         break;
                     case "==":
+                        loadData();
                         break;
                     case "<=":
                         break;

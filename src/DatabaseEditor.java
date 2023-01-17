@@ -73,7 +73,7 @@ public class DatabaseEditor { // implements Initializable
     //Run on launch (implement interface?)
     private void loadData(String path) {
         File folder;
-        if (path.equals("default")) {
+        if (path.equals("default")) { //Used in listTables...
             folder = new File(defaultFolderPath);
         } else {
             folder = new File(path);

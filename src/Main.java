@@ -90,7 +90,8 @@ public class Main {
                     databaseEditor.setSelectedDatabase(selectedDatabase);
 
                     List<String> selectedColumns = Utility.split(Utility.split(command, new char[]{'(', ')'}).get(1), new char[]{' ', ','});
-                    List<String> whereConditions = Utility.split(command, "WHERE");
+                    List<String> whereConditions = Utility.split(Utility.split(command, " WHERE ").get(1), " AND "); //case when BETWEEN AND how to handle?
+//                    List<String> whereConditions = Utility.split(command, new String[]{"WHERE", "AND"});
 
                     selectedDatabase.select(selectedColumns, whereConditions);
                     break;
@@ -105,8 +106,6 @@ public class Main {
                 default:
                     System.out.println("Wrong command. Please try again");
             }
-
-
             command = sc.nextLine();
         }
     }
