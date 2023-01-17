@@ -367,6 +367,9 @@ public class Database {
                         }
                         break;
                     case "<=":
+                    case ">=":
+                    case "<":
+                    case ">":
                         loadData();
                         //get column type (int or date)...
                         //parse column...
@@ -374,7 +377,7 @@ public class Database {
                         head = data.findNodeAt(1);
                         for (int i = 1; i < data.getListSize(); i++) {
                             for (int j = 0; j < head.item.size(); j++) { //Each column in a row...
-                                columnValue = head.item.get(0);
+                                columnValue = head.item.get(j);
                                 columnName = columnOrder.get(j);
                                 columnType = columnTypeOrder.get(j);
                                 if (columnName.equals(selectedColumn)) {
@@ -416,12 +419,7 @@ public class Database {
                             }
                             head = head.next; //Change row...
                         }
-                        break;
-                    case ">=":
-                        break;
-                    case "<":
-                        break;
-                    case ">":
+                        //Print filteredRows...
                         break;
                     default:
                         System.out.println("Wrong select operator. Please try again!");

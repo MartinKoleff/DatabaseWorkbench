@@ -126,4 +126,5 @@ public class Main {
 //Select (Name, DateBirth) FROM Sample WHERE Id <> 5
 //Select (Name, DateBirth) FROM Sample
 //Insert INTO Sample (Id, Name, BirthDate) VALUES (1, "Иван", 01.01.2002)
+//Select (Name, DateBirth) FROM Sample WHERE BirthDate > "01.01.2000"
 //<> -> different from

@@ -193,7 +193,7 @@ public class Utility {
         private static boolean validateDate(String text) {
             int asciiValue; //Pattern -> dd.mm.yyyy
             for (int i = 0; i < text.length(); i++) {
-                if ((i == 2 || i == 6) && Utility.charAt(text, 2) == '.') continue;
+                if ((i == 2 || i == 5) && Utility.charAt(text, i) == '.') continue;
 
                 asciiValue = (int) Utility.charAt(text, i);
                 if (!(asciiValue <= 57 && asciiValue >= 48)) {
