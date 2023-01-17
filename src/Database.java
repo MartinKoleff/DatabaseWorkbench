@@ -30,28 +30,27 @@ public class Database {
     }
 
     private void loadData() {
-       if(!isLoaded) {
-           try {
-               File file = new File(this.getFullPath());
-               BufferedReader br = new BufferedReader(new FileReader(file));
+        if (!isLoaded) {
+            try {
+                File file = new File(this.getFullPath());
+                BufferedReader br = new BufferedReader(new FileReader(file));
 
-               String line;
-               int counter = 1;
-               while ((line = br.readLine()) != null) {
-                   System.out.println(line);
-
-                   if(counter >= 2) {
-                       data.insertNode(Utility.split(line, '\t'));
-                   }
-                   counter++;
-               }
-               isLoaded = true;
-               System.out.println();
-           } catch (FileNotFoundException ex) {
-           } catch (IOException ex) {
-               throw new RuntimeException(ex);
-           }
-       }
+                String line;
+                int counter = 1;
+                while ((line = br.readLine()) != null) {
+//                    System.out.println(line);
+                    if (counter >= 2) {
+                        data.insertNode(Utility.split(line, '\t'));
+                    }
+                    counter++;
+                }
+                isLoaded = true;
+                System.out.println();
+            } catch (FileNotFoundException ex) {
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 
     public void deleteDatabase() {
@@ -266,7 +265,7 @@ public class Database {
     }
 
     public void select(List<String> selectedColumns, List<String> whereConditions) {
-        List<String> filteredRows = new ArrayList<>();
+        List<List<String>> filteredRows = new ArrayList<>();
         List<Integer> selectedColumnIndexes = new ArrayList<>();
         List<String> columnOrder = this.getColumnOrder();
 
@@ -274,7 +273,7 @@ public class Database {
         //Get selected columns indexes...
         for (int totalColumns = 0; totalColumns < selectedColumns.size(); totalColumns++) {
             for (int i = 0; i < columnOrder.size(); i++) {
-                if(selectedColumns.get(totalColumns).equals(columnOrder.get(i))){
+                if (selectedColumns.get(totalColumns).equals(columnOrder.get(i))) {
                     selectedColumnIndexes.add(i);
                     i = columnOrder.size();
                 }
@@ -289,32 +288,30 @@ public class Database {
                 String line;
                 int counter = 1;
                 List<String> splitLine;
-                StringBuilder filteredRow = new StringBuilder(); //to make my own StringBuilder...
+                List<String> filteredRow = new ArrayList<>();
                 while ((line = br.readLine()) != null) {
                     if (counter >= 3) { //3rd row -> data
                         splitLine = Utility.split(line, '\t');
-                        for(int index : selectedColumnIndexes){
-                            filteredRow.append(splitLine.get(index))
-                                    .append("\t");
+                        for (int index : selectedColumnIndexes) {
+                            filteredRow.add(splitLine.get(index));
                         }
-                        filteredRows.add(filteredRow.toString());
-                        filteredRow.setLength(0);
+                        filteredRows.add(filteredRow);
                     }
                     counter++;
                 }
             } catch (FileNotFoundException ex) {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Something went wrong in SELECT...");
             }
-        }else{
+        } else {
             String selectedColumn;
             String mathSign;
             String comparator;
             List<String> conditionSplit;
 
-            for(String condition : whereConditions) {
+            for (String condition : whereConditions) {
                 conditionSplit = Utility.split(condition, ' ');
                 selectedColumn = conditionSplit.get(0);
                 mathSign = conditionSplit.get(1);
@@ -323,19 +320,19 @@ public class Database {
                 String columnValue;
                 String columnName;
                 Node head;
-                switch (mathSign){
+                switch (mathSign) {
                     case "!=":
                     case "<>": //same as !=
                         loadData();
 
                         head = data.findNodeAt(1);
-                        for (int i = 1; i < data.getListSize(); i++){
-                            for(int j = 0; j < head.item.size(); i++) { //Each column in a row...
+                        for (int i = 1; i < data.getListSize(); i++) {
+                            for (int j = 0; j < head.item.size(); j++) { //Each column in a row...
                                 columnValue = head.item.get(0);
                                 columnName = columnOrder.get(j);
-                                if(columnName.equals(selectedColumn) && !columnValue.equals(comparator)){
-                                    //Valid data (add selected columns in filteredRow SB and into filteredRows list)...
+                                if (columnName.equals(selectedColumn) && !columnValue.equals(comparator)) {
                                     System.out.println("yey");
+                                    filteredRows.add(filterRow(selectedColumns, head.item));
                                     break;
                                 }
                             }
@@ -344,6 +341,20 @@ public class Database {
                         break;
                     case "==":
                         loadData();
+
+                        head = data.findNodeAt(1);
+                        for (int i = 1; i < data.getListSize(); i++) {
+                            for (int j = 0; j < head.item.size(); j++) { //Each column in a row...
+                                columnValue = head.item.get(0);
+                                columnName = columnOrder.get(j);
+                                if (columnName.equals(selectedColumn) && columnValue.equals(comparator)) {
+                                    System.out.println("yey");
+                                    filteredRows.add(filterRow(selectedColumns, head.item));
+                                    break;
+                                }
+                            }
+                            head = head.next; //Change row...
+                        }
                         break;
                     case "<=":
                         break;
@@ -353,9 +364,29 @@ public class Database {
                         break;
                     case ">":
                         break;
+                    default:
+                        System.out.println("Wrong select operator. Please try again!");
+                        break;
                 }
             }
         }
+    }
+
+    /**
+     * Filters only the selected columns in a given row
+     */
+    private List<String> filterRow(List<String> selectedColumns, List<String> splitRow) {
+        List<String> filteredRow = new ArrayList<>();
+        List<String> columnOrder = this.getColumnOrder();
+
+        for (int i = 0; i < selectedColumns.size(); i++) {
+            for (String column : columnOrder) {
+                if (column.equals(selectedColumns.get(i))) {
+                    filteredRow.add(splitRow.get(i));
+                }
+            }
+        }
+        return filteredRow;
     }
 }
 

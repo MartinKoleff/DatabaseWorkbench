@@ -25,7 +25,7 @@ public class MyLinkedList {
             this.head = node;
             this.head.next = null;
             this.size = 1;
-            System.out.println(this.head.toString());
+//            System.out.println(this.head.toString());
         } else {
 
             while (current.next != null) {
@@ -155,7 +155,7 @@ public class MyLinkedList {
             for (int i = 0; i < location; i++) {
                 node = node.next;
             }
-            System.out.println("Node item at location " + location + " is " + node.item);
+//            System.out.println("Node item at location " + location + " is " + node.item);
         }
         return node;
     }
