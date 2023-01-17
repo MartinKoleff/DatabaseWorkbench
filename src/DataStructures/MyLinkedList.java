@@ -1,5 +1,7 @@
 package DataStructures;
 
+import java.util.List;
+
 public class MyLinkedList {
     private int size;
     private Node head;
@@ -14,7 +16,7 @@ public class MyLinkedList {
      *
      * @param item - represent the node item to be added to the linked list
      */
-    public void insertNode(Object item) {
+    public void insertNode(List<String> item) {
         Node node = new Node();
         node.item = item;
         Node current = this.head;
@@ -40,7 +42,7 @@ public class MyLinkedList {
      *
      * @param item - represent item of the node to be added to LL
      */
-    public void insertFirst(Object item) {
+    public void insertFirst(List<String> item) {
         Node node = new Node();
         node.item = item;
         node.next = this.head;
@@ -54,7 +56,7 @@ public class MyLinkedList {
      * @param item     - represent the item of the node to be added to the list
      * @param position - position at which the node is to be added
      */
-    public void insertNth(Object item, int position) {
+    public void insertNth(List<String> item, int position) {
         Node node = new Node();
         node.item = item;
         Node current = this.head;

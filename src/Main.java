@@ -92,6 +92,7 @@ public class Main {
                     List<String> selectedColumns = Utility.split(Utility.split(command, new char[]{'(', ')'}).get(1), new char[]{' ', ','});
                     List<String> whereConditions = Utility.split(Utility.split(command, " WHERE ").get(1), " AND "); //case when BETWEEN AND how to handle?
 //                    List<String> whereConditions = Utility.split(command, new String[]{"WHERE", "AND"});
+                    //Utility.split("Id <> 5", " AND ")
 
                     selectedDatabase.select(selectedColumns, whereConditions);
                     break;
@@ -122,5 +123,7 @@ public class Main {
 //Insert INTO Sample (Id, Name) VALUES () () //Invalid command...
 //Insert INTO Sample (Name) VALUES () () //Invalid command...
 //Select (Name, DateBirth) FROM Sample WHERE Id <> 5 AND DateBirth > "01.01.2000"
+//Select (Name, DateBirth) FROM Sample WHERE Id <> 5
 //Select (Name, DateBirth) FROM Sample
+//Insert INTO Sample (Id, Name, BirthDate) VALUES (1, "Иван", 01.01.2002)
 //<> -> different from

@@ -1,6 +1,8 @@
 package DataStructures;
 
+import java.util.List;
+
 public class Node {
-    public Object item;
+    public List<String> item;
     public Node next;
 }

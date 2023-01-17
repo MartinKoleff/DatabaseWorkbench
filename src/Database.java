@@ -38,8 +38,8 @@ public class Database {
                String line;
                int counter = 1;
                while ((line = br.readLine()) != null) {
-                   //Put in list...
                    System.out.println(line);
+
                    if(counter >= 2) {
                        data.insertNode(Utility.split(line, '\t'));
                    }
@@ -81,7 +81,7 @@ public class Database {
         return fullPath;
     }
 
-    public List<String> getColumnTypeOrder() {
+    private List<String> getColumnTypeOrder() {
         try {
             File file = new File(this.getFullPath());
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -110,7 +110,7 @@ public class Database {
         return null;
     }
 
-    public List<String> getColumnOrder() {
+    private List<String> getColumnOrder() {
         try {
             File file = new File(this.getFullPath());
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -258,7 +258,7 @@ public class Database {
         for (String column : columnRowSplit) {
             columnData = Utility.split(column, new char[]{' ', ':'});
             columnName = columnData.get(0);
-            if (columnData.size() > 2 && columnData.get(2).equals("default") || !userInputColumnOrder.contains(columnName)) {
+            if (columnData.size() > 2 && columnData.get(2).equals("default") && !userInputColumnOrder.contains(columnName)) {
                 defaultCounter++;
             }
         }
@@ -320,18 +320,26 @@ public class Database {
                 mathSign = conditionSplit.get(1);
                 comparator = conditionSplit.get(2);
 
+                String columnValue;
+                String columnName;
+                Node head;
                 switch (mathSign){
+                    case "!=":
                     case "<>": //same as !=
                         loadData();
-                        List<String> dataRaw = new ArrayList<>();
 
-                        Node head = data.findNodeAt(1);
-                        for (int i = 0; i < data.getListSize(); i++){
-                            //columnName
-                            //columnType
-                            //if default...
-
-                            head = head.next;
+                        head = data.findNodeAt(1);
+                        for (int i = 1; i < data.getListSize(); i++){
+                            for(int j = 0; j < head.item.size(); i++) { //Each column in a row...
+                                columnValue = head.item.get(0);
+                                columnName = columnOrder.get(j);
+                                if(columnName.equals(selectedColumn) && !columnValue.equals(comparator)){
+                                    //Valid data (add selected columns in filteredRow SB and into filteredRows list)...
+                                    System.out.println("yey");
+                                    break;
+                                }
+                            }
+                            head = head.next; //Change row...
                         }
                         break;
                     case "==":
