@@ -158,11 +158,10 @@ public class DatabaseEditor { // implements Initializable
                     e.printStackTrace();
                 }
                 System.out.println(file.getName() + "\n"
-                        + fileSizeBytes / 1024 + "\n" //kb
+                        + fileSizeBytes / 1024 + "kilobytes" + "\n"
                         + creationTime);
                 return;
 //                Database database = new Database(tableName, false);
-//                return;
             }
         }
     }
