@@ -1,5 +1,8 @@
 import javax.xml.crypto.Data;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -83,7 +86,7 @@ public class DatabaseEditor { // implements Initializable
         databases.clear();
         for (File file :
                 folder.listFiles()) {
-            database = new Database(Utility.split(file.getName(), '.').get(0), true);
+            database = new Database(Utility.split(file.getName(), '.').get(0), false);
             databases.add(database);
         }
     }
@@ -135,18 +138,31 @@ public class DatabaseEditor { // implements Initializable
         String path = Utility.split(command, ' ').get(1);
         loadData(path);
 
-//        for (Database database :
-//                databases) {
-//            System.out.println(database.getTableName());
-//        }
+        for (Database database :
+                databases) {
+            System.out.println(database.getTableName());
+        }
     }
 
     public void tableInfo(String command) {
         String tableName = Utility.split(command, ' ').get(1);
         for (int i = 0; i < defaultFolder.listFiles().length; i++) {
             if (defaultFolder.listFiles()[i].getName().equals(tableName + ".txt")) {
-                Database database = new Database(tableName, true);
+                File file = defaultFolder.listFiles()[i];
+                FileTime creationTime = null;
+                long fileSizeBytes = 0;
+                try {
+                     creationTime = (FileTime) Files.getAttribute(Path.of(file.getPath()), "creationTime");
+                   fileSizeBytes = Files.size(Path.of(file.getPath()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(file.getName() + "\n"
+                        + fileSizeBytes / 1024 + "\n" //kb
+                        + creationTime);
                 return;
+//                Database database = new Database(tableName, false);
+//                return;
             }
         }
     }
