@@ -114,7 +114,7 @@ public class Database {
         return null;
     }
 
-    private List<String> getColumnOrder() {
+     List<String> getColumnOrder() {
         try {
             File file = new File(this.getFullPath());
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -280,16 +280,17 @@ public class Database {
             showAllColumns = true;
         }
 
-        for (int totalColumns = 0; totalColumns < selectedColumns.size(); totalColumns++) {
-            for (int i = 0; i < columnOrder.size(); i++) {
-                if (selectedColumns.get(totalColumns).equals(columnOrder.get(i))) {
-                    selectedColumnIndexes.add(i);
-                    i = columnOrder.size();
+        if(!showAllColumns) {
+            for (int totalColumns = 0; totalColumns < selectedColumns.size(); totalColumns++) {
+                for (int i = 0; i < columnOrder.size(); i++) {
+                    if (selectedColumns.get(totalColumns).equals(columnOrder.get(i))) {
+                        selectedColumnIndexes.add(i);
+                        i = columnOrder.size();
+                    }
                 }
             }
         }
 
-        if (whereConditions.isEmpty()) {
             try {
                 File file = new File(this.getFullPath());
                 BufferedReader br = new BufferedReader(new FileReader(file));
@@ -298,15 +299,25 @@ public class Database {
                 int counter = 1;
                 List<String> splitLine;
                 List<String> filteredRow = new ArrayList<>();
-                while ((line = br.readLine()) != null) {
-                    if (counter >= 3) { //3rd row -> data
-                        splitLine = Utility.split(line, '\t');
-                        for (int index : selectedColumnIndexes) {
-                            filteredRow.add(splitLine.get(index));
+                if (showAllColumns) { //*
+                    while((line = br.readLine()) != null) {
+                        if (counter >= 3) { //3rd row -> data
+                            filteredRows.add(Utility.split(line, '\t'));
                         }
-                        filteredRows.add(filteredRow);
+                        counter++;
                     }
-                    counter++;
+                }else {
+                    while ((line = br.readLine()) != null) {
+                        if (counter >= 3) { //3rd row -> data
+                            splitLine = Utility.split(line, '\t');
+                            for (int index : selectedColumnIndexes) {
+                                filteredRow.add(splitLine.get(index));
+                            }
+                            filteredRows.add(filteredRow);
+                            filteredRow = new ArrayList<>();
+                        }
+                        counter++;
+                    }
                 }
             } catch (FileNotFoundException ex) {
             } catch (IOException ex) {
@@ -314,7 +325,7 @@ public class Database {
             } catch (Exception e) {
                 System.out.println("Something went wrong in SELECT...");
             }
-        } else {
+
             String selectedColumn;
             String mathSign;
             String comparator;
@@ -332,19 +343,23 @@ public class Database {
                 Node head;
 
                 MyLinkedList filteredList;
+                int itemsSize;
                 switch (mathSign) {
                     case "!=":
                     case "<>": //same as !=
                         loadData();
 
                         head = data.findNodeAt(1);
-                        for (int i = 1; i < data.getListSize(); i++) {
+                        itemsSize = data.getListSize();
+                        for (int i = 1; i < itemsSize; i++) {
                             for (int j = 0; j < head.item.size(); j++) { //Each column in a row...
-                                columnValue = head.item.get(0);
+                                columnValue = head.item.get(j); //0
                                 columnName = columnOrder.get(j);
-                                if (columnName.equals(selectedColumn) && !columnValue.equals(comparator)) {
-                                    System.out.println("yey");
-                                    filteredRows.add(filterRow(selectedColumns, head.item));
+                                if (columnName.equals(selectedColumn) && columnValue.equals(comparator)) {
+                                    filteredRows.remove(filterRow(selectedColumns, head.item));
+                                    data.deleteNthNode(i);
+                                    i--;
+                                    itemsSize--;
                                     break;
                                 }
                             }
@@ -355,13 +370,16 @@ public class Database {
                         loadData();
 
                         head = data.findNodeAt(1);
-                        for (int i = 1; i < data.getListSize(); i++) {
+                        itemsSize = data.getListSize();
+                        for (int i = 1; i < itemsSize; i++) {
                             for (int j = 0; j < head.item.size(); j++) { //Each column in a row...
-                                columnValue = head.item.get(0);
+                                columnValue = head.item.get(j); //0
                                 columnName = columnOrder.get(j);
-                                if (columnName.equals(selectedColumn) && columnValue.equals(comparator)) {
-                                    System.out.println("yey");
-                                    filteredRows.add(filterRow(selectedColumns, head.item));
+                                if (columnName.equals(selectedColumn) && !columnValue.equals(comparator)) {
+                                    filteredRows.remove(filterRow(selectedColumns, head.item));
+                                    data.deleteNthNode(i);
+                                    i--;
+                                    itemsSize--;
                                     break;
                                 }
                             }
@@ -378,7 +396,8 @@ public class Database {
 
                         head = data.findNodeAt(1);
                         filteredList = data;
-                        for (int i = 1; i < filteredList.getListSize(); i++) {
+                        itemsSize = data.getListSize();
+                        for (int i = 1; i < itemsSize; i++) {
                             for (int j = 0; j < head.item.size(); j++) { //Each column in a row...
                                 columnValue = head.item.get(j);
                                 columnName = columnOrder.get(j);
@@ -393,8 +412,10 @@ public class Database {
                                                     Date comparatorDate = format.parse(comparator);
 
                                                     if (!Utility.parser.compareDates(tableDate, comparatorDate, mathSign)) {
-//                                                        System.out.println("yey");
                                                         filteredRows.remove(filterRow(selectedColumns, head.item));
+                                                        data.deleteNthNode(i);
+                                                        i--;
+                                                        itemsSize--;
                                                     }
                                                 } catch (ParseException e) {
                                                     return;
@@ -407,8 +428,10 @@ public class Database {
                                                     int tableNumber = Integer.parseInt(columnValue);
                                                     int comparatorNumber = Integer.parseInt(comparator);
                                                     if (!Utility.parser.compareInts(tableNumber, comparatorNumber, mathSign)) {
-//                                                        System.out.println("yeyy");
                                                         filteredRows.remove(filterRow(selectedColumns, head.item));
+                                                        data.deleteNthNode(i);
+                                                        i--;
+                                                        itemsSize--;
                                                     }
                                                 } catch (ParseException e) {
                                                     return;
@@ -428,9 +451,8 @@ public class Database {
                         System.out.println("Wrong select operator. Please try again!");
                         break;
                 }
-                filteredRows.forEach(System.out::println);
             }
-        }
+        filteredRows.forEach(System.out::println);
     }
 
     /**

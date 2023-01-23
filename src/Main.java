@@ -88,9 +88,20 @@ public class Main {
 
                     selectedDatabase = new Database(tableName, false);
                     databaseEditor.setSelectedDatabase(selectedDatabase);
+                    List<String> selectedColumns;
+                    try {
+                        selectedColumns = Utility.split(Utility.split(command, new char[]{'(', ')'}).get(1), new char[]{' ', ','});
+                    } catch (IndexOutOfBoundsException e) { //*
+                        selectedColumns = new ArrayList<>();
+                        selectedColumns.add("*");
+                    }
 
-                    List<String> selectedColumns = Utility.split(Utility.split(command, new char[]{'(', ')'}).get(1), new char[]{' ', ','});
-                    List<String> whereConditions = Utility.split(Utility.split(command, " WHERE ").get(1), " AND "); //case when BETWEEN AND how to handle?
+                    List<String> whereConditions;
+                    try {
+                         whereConditions = Utility.split(Utility.split(command, " WHERE ").get(1), " AND "); //case when BETWEEN AND how to handle?
+                    }catch (IndexOutOfBoundsException e){
+                        whereConditions = new ArrayList<>();
+                    }
 //                    List<String> whereConditions = Utility.split(command, new String[]{"WHERE", "AND"});
                     //Utility.split("Id <> 5", " AND ")
 
