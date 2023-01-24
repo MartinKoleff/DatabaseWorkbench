@@ -411,7 +411,7 @@ public class Database {
                                                     Date tableDate = format.parse(columnValue);
                                                     Date comparatorDate = format.parse(comparator);
 
-                                                    if (!Utility.parser.compareDates(tableDate, comparatorDate, mathSign)) {
+                                                    if (!Utility.Parser.compareDates(tableDate, comparatorDate, mathSign)) {
                                                         filteredRows.remove(filterRow(selectedColumns, head.item));
                                                         data.deleteNthNode(i);
                                                         i--;
@@ -427,7 +427,7 @@ public class Database {
                                                 try {
                                                     int tableNumber = Integer.parseInt(columnValue);
                                                     int comparatorNumber = Integer.parseInt(comparator);
-                                                    if (!Utility.parser.compareInts(tableNumber, comparatorNumber, mathSign)) {
+                                                    if (!Utility.Parser.compareInts(tableNumber, comparatorNumber, mathSign)) {
                                                         filteredRows.remove(filterRow(selectedColumns, head.item));
                                                         data.deleteNthNode(i);
                                                         i--;

@@ -157,12 +157,19 @@ public class Utility {
                     String currentColumnType = userInputColumnTypes.get(i);
                     switch (currentColumnType) {
                         case "int":
-                            return validateInt(userInput.get(i));
+                            if(!validateInt(userInput.get(i))){
+                                return false;
+                            }
+                            continue;
                         case "string":
-                            return true;
+//                            return true;
 //                            return validateString(userInput.get(i)); //ASCII Table range of lower/upper case try each char...
+                            continue;
                         case "date":
-                            return validateDate(userInput.get(i));
+                            if(!validateDate(userInput.get(i))){
+                                return false;
+                            }
+                            continue;
                         default:
                             return false; //Wrong input...
                     }
@@ -235,7 +242,7 @@ public class Utility {
             }
         }
 
-        public boolean compareInts(int number1, int number2, String mathSign) throws Exception {
+        public static boolean compareInts(int number1, int number2, String mathSign) throws Exception {
             switch (mathSign) {
                 case "<=":
                     return number1 <= number2;

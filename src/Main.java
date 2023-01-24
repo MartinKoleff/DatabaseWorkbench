@@ -102,9 +102,6 @@ public class Main {
                     }catch (IndexOutOfBoundsException e){
                         whereConditions = new ArrayList<>();
                     }
-//                    List<String> whereConditions = Utility.split(command, new String[]{"WHERE", "AND"});
-                    //Utility.split("Id <> 5", " AND ")
-
                     selectedDatabase.select(selectedColumns, whereConditions);
                     break;
                 case "Join":
@@ -133,11 +130,12 @@ public class Main {
 //Insert INTO Sample (Name) VALUES ("Mikhail") ("Pedro") //Invalid command...
 //Insert INTO Sample (Id, Name) VALUES () () //Invalid command...
 //Insert INTO Sample (Name) VALUES () () //Invalid command...
-//Select (Name, DateBirth) FROM Sample WHERE Id <> 5 AND DateBirth > "01.01.2000"
-//Select (Name, DateBirth) FROM Sample WHERE Id <> 5
-//Select (Name, DateBirth) FROM Sample
+//Select (Name, BirthDate) FROM Sample WHERE Id <> 5 AND BirthDate > "01.01.2000"
+//Select (Name, BirthDate) FROM Sample WHERE Id <> 5
+//Select (Name, BirthDate) FROM Sample WHERE Id < 5
+//Select (Name, BirthDate) FROM Sample
 //Insert INTO Sample (Id, Name, BirthDate) VALUES (1, "Иван", 01.01.2002)
-//Select (Name, DateBirth) FROM Sample WHERE BirthDate > "01.01.2000"
+//Select (Name, BirthDate) FROM Sample WHERE BirthDate > "01.01.2000"
 //Select * FROM Sample
 //Select (Id, Name) FROM Sample
 //<> -> different from

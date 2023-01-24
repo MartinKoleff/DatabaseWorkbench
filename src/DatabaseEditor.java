@@ -152,16 +152,16 @@ public class DatabaseEditor { // implements Initializable
                 FileTime creationTime = null;
                 long fileSizeBytes = 0;
                 try {
-                     creationTime = (FileTime) Files.getAttribute(Path.of(file.getPath()), "creationTime");
-                   fileSizeBytes = Files.size(Path.of(file.getPath()));
+                    creationTime = (FileTime) Files.getAttribute(Path.of(file.getPath()), "creationTime");
+                    fileSizeBytes = Files.size(Path.of(file.getPath()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 System.out.println(file.getName() + "\n"
                         + fileSizeBytes / 1024 + "kilobytes" + "\n"
                         + creationTime);
+                //Database database = new Database(tableName, false);
                 return;
-//                Database database = new Database(tableName, false);
             }
         }
     }
