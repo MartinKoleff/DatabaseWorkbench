@@ -9,10 +9,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class DatabaseEditor { // implements Initializable
-    private static String defaultFolderPath = "D:\\test\\databaseEditor";
-    //private static String defaultFolderPath = "C:\\Users\\Martin\\IdeaProjects\\DatabaseWorkbench";
-//    private static String defaultFolderPath = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
+public class DatabaseManager {
+    private static String defaultFolderPath = "C:\\test";
 
 
     private static Database selectedDatabase;

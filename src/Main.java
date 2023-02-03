@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        DatabaseEditor databaseEditor = new DatabaseEditor();
+        DatabaseManager databaseManager = new DatabaseManager();
 
         Scanner sc = new Scanner(System.in);
         String command = sc.nextLine();
@@ -14,26 +14,26 @@ public class Main {
         List<String> dataRaw;
         String tableName;
         while (!command.equals("Stop")) {
-            commandType = Utility.split(command, ' ').get(0); //Utility.toLowerCase()
+            commandType = Utility.split(command, ' ').get(0);
             switch (commandType) {
                 case "CreateTable":
-                    databaseEditor.createTable(command);
+                    databaseManager.createTable(command);
                     break;
                 case "DropTable":
-                    databaseEditor.dropTable(command);
+                    databaseManager.dropTable(command);
                     break;
                 case "ListTables":
-                    databaseEditor.listTables(command);
+                    databaseManager.listTables(command);
                     break;
                 case "TableInfo":
-                    databaseEditor.tableInfo(command);
+                    databaseManager.tableInfo(command);
                     break;
                 case "Insert":
                     dataRaw = Utility.split(command, new char[]{' ', ',', '\"', '(', ')'});
                     tableName = dataRaw.get(2);
 
                     selectedDatabase = new Database(tableName, false);
-                    databaseEditor.setSelectedDatabase(selectedDatabase);
+                    databaseManager.setSelectedDatabase(selectedDatabase);
 
                     List<List<String>> rows = new ArrayList<>();
                     List<String> dataRaw2 = Utility.trimList(
@@ -68,7 +68,7 @@ public class Main {
                             throw new Exception();
                         }
 
-                        databaseEditor.insert(rows);
+                        databaseManager.insert(rows);
                         rows.clear();
                     } catch (Exception e) {
                         System.out.println("Invalid command. Please try again.");
@@ -87,7 +87,7 @@ public class Main {
                     tableName = dataRaw.get(fromIndex + 1);
 
                     selectedDatabase = new Database(tableName, false);
-                    databaseEditor.setSelectedDatabase(selectedDatabase);
+                    databaseManager.setSelectedDatabase(selectedDatabase);
                     List<String> selectedColumns;
                     try {
                         selectedColumns = Utility.split(Utility.split(command, new char[]{'(', ')'}).get(1), new char[]{' ', ','});
@@ -119,17 +119,13 @@ public class Main {
         }
     }
 }
+//Supported commands:
 //CreateTable Sample(Id:int, Name:string, BirthDate:date default "01.01.2022")
 //DropTable Sample
 //ListTables default
 //TableInfo Sample
 //Insert INTO Sample (Id, Name) VALUES (1, "Иван")
 //Insert INTO Sample (Name, Id) VALUES ("Mikhail", 2) ("Pedro", 3)
-//Insert INTO Sample (Name, Id) VALUES ("Ivan", 2) (3, "Messi") //Invalid command...
-//Insert INTO Sample (Name, Id) VALUES ("Ivan", 2, 01.01.2002)  //Invalid command...
-//Insert INTO Sample (Name) VALUES ("Mikhail") ("Pedro") //Invalid command...
-//Insert INTO Sample (Id, Name) VALUES () () //Invalid command...
-//Insert INTO Sample (Name) VALUES () () //Invalid command...
 //Select (Name, BirthDate) FROM Sample WHERE Id <> 5 AND BirthDate > "01.01.2000"
 //Select (Name, BirthDate) FROM Sample WHERE Id <> 5
 //Select (Name, BirthDate) FROM Sample WHERE Id < 5
@@ -138,4 +134,10 @@ public class Main {
 //Select (Name, BirthDate) FROM Sample WHERE BirthDate > "01.01.2000"
 //Select * FROM Sample
 //Select (Id, Name) FROM Sample
-//<> -> different from
+
+//Invalid commands:
+//Insert INTO Sample (Name, Id) VALUES ("Ivan", 2) (3, "Messi") //Invalid command...
+//Insert INTO Sample (Name, Id) VALUES ("Ivan", 2, 01.01.2002)  //Invalid command...
+//Insert INTO Sample (Name) VALUES ("Mikhail") ("Pedro") //Invalid command...
+//Insert INTO Sample (Id, Name) VALUES () () //Invalid command...
+//Insert INTO Sample (Name) VALUES () () //Invalid command...

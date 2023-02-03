@@ -8,14 +8,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 //Setup DB obj via databaseEditor and edit / insert and delete from here...
 public class Database {
     private String tableName;
-    private static String defaultFolder = "D:\\test\\databaseEditor";
-//    private static String defaultFolder = "C:\\Users\\Martin\\IdeaProjects\\DatabaseWorkbench";
-//    private static String defaultFolder = "C:\\Users\\Martin.Kolev\\Documents\\test\\databaseEditor";
+    private static String defaultFolder = "C:\\test";
 
     private String fullPath;
     private boolean isLoaded = false;
@@ -62,7 +59,7 @@ public class Database {
         File file = new File(this.getFullPath());
         if (file.exists()) {
             file.delete();
-            DatabaseEditor.getDatabases().remove(this);
+            DatabaseManager.getDatabases().remove(this);
             System.out.printf("Table %s has been deleted.\n", tableName);
         } else {
             System.out.printf("Table with the name %s doesn't exist. Please try again with a different name.", tableName);
