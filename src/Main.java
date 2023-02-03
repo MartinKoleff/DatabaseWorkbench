@@ -132,6 +132,7 @@ public class Main {
 //Select (Name, BirthDate) FROM Sample
 //Insert INTO Sample (Id, Name, BirthDate) VALUES (1, "Иван", 01.01.2002)
 //Select (Name, BirthDate) FROM Sample WHERE BirthDate > "01.01.2000"
+//Select (Name, BirthDate) FROM Sample WHERE BirthDate <> "01.01.2022"
 //Select * FROM Sample
 //Select (Id, Name) FROM Sample
 
